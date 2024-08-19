@@ -1,0 +1,9 @@
+# ignore soundfont folder
+/soundfont
+
+# ignore midi folder; too big to git
+/js/midi
+
+# ignore system files
+.DS_Store
+Thumbs.db
