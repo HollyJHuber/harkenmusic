@@ -19,7 +19,7 @@ const source = [
         "index": 0,
         "note": "A&#x266d",
         "cycle": 6,
-        "playCycleOrder": -1,
+        "alternatingCycleOrder": -1,
         "intervalLabel": "t",
         "color": { r: 204, g: 0, b: 0, a: 0.5 },
         "midi": 68
@@ -28,7 +28,7 @@ const source = [
         "index": 1,
         "note": "E&#x266d",
         "cycle": 1, 
-        "playCycleOrder": 10,
+        "alternatingCycleOrder": 10,
         "intervalLabel": "m2",
         "color": { r: 0, g: 51, b: 255, a: 0.5 },
         "midi": 63
@@ -37,7 +37,7 @@ const source = [
         "index": 2,
         "note": "B&#x266d",
         "cycle": 8,
-        "playCycleOrder": 8,
+        "alternatingCycleOrder": 8,
         "intervalLabel": "m6",
         "color": { r: 255, g: 204, b: 0, a: 0.5 },
         "midi": 70
@@ -46,7 +46,7 @@ const source = [
         "index": 3,
         "note": "F",
         "cycle": 3,
-        "playCycleOrder": 6,
+        "alternatingCycleOrder": 6,
         "intervalLabel": "m3",
         "color": { r: 102, g: 0, b: 153, a: 0.5 },
         "midi": 65
@@ -55,7 +55,7 @@ const source = [
         "index": 4,
         "note": "C",
         "cycle": 10,
-        "playCycleOrder": 4,
+        "alternatingCycleOrder": 4,
         "intervalLabel": "m7",
         "color": { r: 51, g: 153, b: 0, a: 0.5 },
         "midi": 72
@@ -64,7 +64,7 @@ const source = [
         "index": 5,
         "note": "G",
         "cycle": 5,
-        "playCycleOrder": 2,
+        "alternatingCycleOrder": 2,
         "intervalLabel": "P4",
         "color": { r: 153, g: 0, b: 0, a: 0.5 },
         "midi": 67
@@ -73,7 +73,7 @@ const source = [
         "index": 6,
         "note": "D",
         "cycle": 0,
-        "playCycleOrder": 0,
+        "alternatingCycleOrder": 0,
         "intervalLabel": "T",
         "color": { r: 51, g: 153, b: 255, a: 0.5 },
         "midi": 62
@@ -82,7 +82,7 @@ const source = [
         "index": 7,
         "note": "A",
         "cycle": 7,
-        "playCycleOrder": 1,
+        "alternatingCycleOrder": 1,
         "intervalLabel": "P5",
         "color": { r: 255, g: 102, b: 0, a: 0.5 },
         "midi": 69
@@ -91,7 +91,7 @@ const source = [
         "index": 8,
         "note": "E",
         "cycle": 2,
-        "playCycleOrder": 3,
+        "alternatingCycleOrder": 3,
         "intervalLabel": "M2",
         "color": { r: 51, g: 0, b: 204, a: 0.5 },
         "midi": 64
@@ -100,7 +100,7 @@ const source = [
         "index": 9,
         "note": "B",
         "cycle": 9,
-        "playCycleOrder": 5,
+        "alternatingCycleOrder": 5,
         "intervalLabel": "M6",
         "color": { r: 102, g: 255, b: 51, a: 0.5 },
         "midi": 71
@@ -109,7 +109,7 @@ const source = [
         "index": 10,
         "note": "F&#x266f",
         "cycle": 4,
-        "playCycleOrder": 7,
+        "alternatingCycleOrder": 7,
         "intervalLabel":"M3",
         "color": { r: 102, g: 0, b: 0, a: 0.5 },
         "midi": 66
@@ -118,7 +118,7 @@ const source = [
         "index": 11,
         "note": "C&#x266f",
         "cycle": 11,
-        "playCycleOrder": 9,
+        "alternatingCycleOrder": 9,
         "intervalLabel": "M7",
         "color": { r: 0, g: 204, b: 204, a: 0.5 },
         "midi": 73
@@ -127,7 +127,7 @@ const source = [
         "index": 12,
         "note": "G&#x266f",
         "cycle": 6,
-        "playCycleOrder": 11,
+        "alternatingCycleOrder": 11,
         "intervalLabel": "t",
         "color": { r: 204, g: 0, b: 0, a: 0.5 },
         "midi": 68
@@ -254,7 +254,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('goBack').style.display = 'none';    
 
     // temp
-    const sequenceToPlay = _.slice(_.orderBy(source,["playCycleOrder"], ["asc"]),1);
+    const sequenceToPlay = _.slice(_.orderBy(source,["alternatingCycleOrder"], ["asc"]),1);
 
     // Apply the background colors only to cells without "numbering" or "interval" classes
     const tableCells = document.querySelectorAll("#combinations td:not(.numbering):not(.interval)");
@@ -275,8 +275,8 @@ const comboLabels = ["", "Tonic", "Intervals", "Triads", "Tetrachords", "Pentato
  * plays the circle of fifths
  */
 function playCycle () {
-    // removes leading 6; orders by playCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
-    const sequenceToPlay = _.slice(_.orderBy(source,["playCycleOrder"], ["asc"]),1);
+    // removes leading 6; orders by alternatingCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
+    const sequenceToPlay = _.slice(_.orderBy(source,["alternatingCycleOrder"], ["asc"]),1);
     // console.log(sequenceToPlay);
 
     // retrieve cells without "numbering" or "interval" classes
