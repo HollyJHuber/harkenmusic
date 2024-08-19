@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIDI.js Example</title>
+	<!-- polyfill -->
+	<script src="./inc/shim/Base64.js" type="text/javascript"></script>
+	<script src="./inc/shim/Base64binary.js" type="text/javascript"></script>
+	<script src="./inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+	<!-- midi.js package -->
+	<script src="./js/midi/audioDetect.js" type="text/javascript"></script>
+	<script src="./js/midi/gm.js" type="text/javascript"></script>
+	<script src="./js/midi/loader.js" type="text/javascript"></script>
+	<script src="./js/midi/plugin.audiotag.js" type="text/javascript"></script>
+	<script src="./js/midi/plugin.webaudio.js" type="text/javascript"></script>
+	<script src="./js/midi/plugin.webmidi.js" type="text/javascript"></script>
+	<!-- utils -->
+	<script src="./js/util/dom_request_xhr.js" type="text/javascript"></script>
+	<script src="./js/util/dom_request_script.js" type="text/javascript"></script>
+</head>
+<body>
+    <button id="playButton" disabled>Play MIDI Sequence</button>
+
+    <script>
+        function playMidiSequence() {
+            const notes = [];
+            const startNote = 38;
+            const endNote = 62;
+            const bpm = 120;
+            const duration = 0.5; // 1/8th note duration in seconds (60 / bpm / 2)
+
+            // Create the note sequence
+            for (let i = startNote; i <= endNote; i++) {
+                notes.push(i);
+            }
+
+            var delay = 0; // play one note every quarter second
+			var note = 50; // the MIDI note
+			var velocity = 127; // how hard the note hits
+			// play the note
+			// MIDI.setVolume(0, 127);
+			// MIDI.noteOn(0, note, velocity, delay);
+			// MIDI.noteOff(0, note, delay + 0.75);
+
+            // Play the sequence
+            let currentTime = 0;
+            notes.forEach((note) => {
+                MIDI.noteOn(0, note, velocity, currentTime);
+                MIDI.noteOff(0, note, currentTime + duration);
+                currentTime += duration; // Move to the next note time
+            });
+        }
+
+        // Load instruments
+        window.onload = function () {
+            MIDI.loadPlugin({
+                soundfontUrl: "./soundfont/",
+		        instrument: "acoustic_grand_piano",
+		        onprogress: function(state, progress) {
+			    console.log(state, progress);
+		},
+                onsuccess: function () {
+                    console.log("MIDI.js loaded successfully!");
+                    document.getElementById('playButton').disabled = false; // Enable the button after MIDI.js loads
+                    document.getElementById('playButton').onclick = playMidiSequence;
+                }
+            });
+        };
+    </script>
+</body>
+</html>
