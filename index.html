@@ -21,9 +21,7 @@
         <script src="./js/util/dom_request_script.js" type="text/javascript"></script>
         <style>
             body  {
-                background-image: url("images/paper_tile.jpg");
-                background-size: 288px 288  px; 
-                background-color: antiquewhite;
+                background-color: seashell;
                 padding: 5px;
                 font-family: Helvetica;
                 padding: 5px;
@@ -81,6 +79,11 @@
                 width: 2%;
                 background-color: white;
             }
+            .footerLine{
+                font-size: 16px;
+                color: darkslategrey;
+                margin: 12px;
+            }
             .grey-button {
             background-color: #999999;
             color: white;
@@ -96,6 +99,24 @@
         }
 
         .grey-button:active {
+            background-color: #333333; /* Even darker shade for active (clicked) state */
+        }
+
+        .play-button {
+            background-color: #999999;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            font-size: 24px;
+            cursor: pointer;
+            border-radius: 3px; /* Rounded corners */
+        }
+
+        .play-button:hover {
+            background-color: #666666; /* Darker shade of grey for hover effect */
+        }
+
+        .play-button:active {
             background-color: #333333; /* Even darker shade for active (clicked) state */
         }
             .AbG {
@@ -235,7 +256,6 @@
 
             <div><button class="grey-button" id="goBack" onclick="goBack()">GO BACK</button>
             <button class="grey-button" id="refresh" onclick="refreshPage()">START OVER</button>
-            <button class="grey-button" id="playButton" disabled>Play Cycle</button></div>
 
             <div id="totalCombinations"></div>
             <!-- heading, number of total combinations dynamically inserted here -->
@@ -264,7 +284,8 @@
 
             <div class="divider"></div>
             
-            <footer> <span id="email"></span></footer>
+            <footer> <span id="email"></span>
+            <p class = "footerLine">Copyright 2024, Mitchell Kahle and Holly J. Huber, MIT License</p></footer>
         <!-- Javascript goes here so DOM is fully loaded-->
         <script src="js/index.js"></script>
         <script>
@@ -274,11 +295,8 @@
                 soundfontUrl: "./soundfont/",
 		        instrument: "acoustic_grand_piano",
 		        onprogress: function(state, progress) {
-			    console.log(state, progress);
 		},
                 onsuccess: function () {
-                    console.log("MIDI.js loaded successfully!");
-                    document.getElementById('playButton').disabled = false; // Enable the button after MIDI.js loads
                     document.getElementById('playButton').onclick = playCycle;
                 }
             });

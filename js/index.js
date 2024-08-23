@@ -239,16 +239,38 @@ const noteSource = [
 /**
  * generates initial html display of the cycle only
  */
+
 let cycleOnly = source.map((obj) => 
     `<td>${obj.cycle}</td>`
     );
 
 allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-<tr><td class = "numbering">*</td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+<tr><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></div></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+
+let audioContext;
 
 document.addEventListener('DOMContentLoaded', function() {
     // Initial load with default values
     document.querySelector("#combinations").innerHTML = allCombinations;
+
+        // Add the event listener for the button click to handle AudioContext and MIDI playback
+        document.getElementById('playButton').addEventListener('click', function() {
+            if (!audioContext) {
+                // Create the AudioContext only after the user has clicked the button
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+    
+            if (audioContext.state === 'suspended') {
+                // Resume the AudioContext if it’s in a suspended state
+                audioContext.resume().then(() => {
+                    // Start your MIDI playback here
+                        playCycle(audioContext);
+                });
+            } else {
+                // Start your MIDI playback here
+                    playCycle(audioContext);
+            }
+        });
 
     document.getElementById('refresh').style.display = 'none';
     document.getElementById('goBack').style.display = 'none';    
@@ -274,10 +296,14 @@ const comboLabels = ["", "Tonic", "Intervals", "Triads", "Tetrachords", "Pentato
  * function called by the Play Cycle button
  * plays the circle of fifths
  */
-function playCycle () {
+function playCycle (audioContext) {
+    console.log("MIDI sequence started!");
+    
+    // disable the button to prevent spam tapping
+    document.getElementById('playButton').disabled = true; 
+
     // removes leading 6; orders by alternatingCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
     const sequenceToPlay = _.slice(_.orderBy(source,["alternatingCycleOrder"], ["asc"]),1);
-    // console.log(sequenceToPlay);
 
     // retrieve cells without "numbering" or "interval" classes
     const tableCells = document.querySelectorAll("#combinations td:not(.numbering):not(.interval)");
@@ -296,11 +322,10 @@ function playCycle () {
             // access the corresponding table cell
             const cell = tableCells[note.index];
 
-            // Change cell background color to indicate the note is playing
+            // Change cell background alpha to indicate the note is playing
             let colorObj = note.color;
             colorObj.a = 0.9;
-            const rgbaColor = `rgba(${colorObj.r}, ${colorObj.g}, ${colorObj.b}, ${colorObj.a})`;
-            cell.style.backgroundColor = rgbaColor;
+            cell.style.backgroundColor = `rgba(${colorObj.r}, ${colorObj.g}, ${colorObj.b}, ${colorObj.a})`;
 
             // play the note
             MIDI.noteOn(0, note.midi, velocity, 0);
@@ -311,6 +336,10 @@ function playCycle () {
                 cell.style.backgroundColor = `rgba(${colorObj.r}, ${colorObj.g}, ${colorObj.b}, ${colorObj.a})`; 
                 MIDI.noteOff(0, note.midi, duration);
             }, duration * 750); // Delay matches the note duration in milliseconds
+            if (index === sequenceToPlay.length -1) {
+                // enable play button
+                document.getElementById('playButton').disabled = false; 
+            }
         }, startTime); // Start the note and color change after the calculated start time
     });
 }
