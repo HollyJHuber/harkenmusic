@@ -818,7 +818,7 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
     count = 0;
     _.forEach(rotations, (array) => {
         count ++;
-        let cellDisplay = array.map((obj) => `<td class = ${obj.color}>${obj.cycle}</td>`)
+        let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`)
         commonRotations.push(`<tr><td class = "numbering">${count}.</td>${cellDisplay.join("")}</tr>`);
     });
 
@@ -845,7 +845,7 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
     count = 0;
     _.forEach(sourcePermutations, (array) => {
         count ++;
-        let cellDisplay = array.map((obj) => `<td class = ${obj.color}>${obj.cycle}</td>`)
+        let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`)
         allPermutations.push(`<tr><td class = "numbering">${count}.</td>${cellDisplay.join("")}</tr>`);
 
     });
@@ -970,7 +970,7 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     count = 0;
     _.forEach(reflections, (array) => {
         count ++;
-        let cellDisplay = array.map((obj) => `<td class = ${obj.color}>${obj.cycle}</td>`)
+        let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`)
         displayReflections.push(`<tr><td class = "numbering">${count}.</td>${cellDisplay.join("")}</tr>`);
     });
         // displays Reflections
@@ -987,7 +987,10 @@ function createPermutationsTables(comboCount, selectedComboArray) {
  function rotateCombination(combination) {
 //cycleSource changes the order to ascending cycle order [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5]
  
-    const cycleSource =  _.concat(_.slice(noteSource, 6, 13), _.slice(noteSource, 1, 6))
+    const cycleSource =  _.concat(_.slice(source, 6, 13), _.slice(source, 1, 6));
+
+    // TODO // why was I using noteSource here instead of source???
+    // const cycleSource =  _.concat(_.slice(noteSource, 6, 13), _.slice(noteSource, 1, 6));
 
     const rotations = [];
     const cycleIndices = _.map(combination, obj => _.findIndex(cycleSource, { cycle: obj.cycle }));
@@ -1005,7 +1008,7 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     count = 0;
     _.forEach(rotations, (array) => {
         count ++;
-        let cellDisplay = array.map((obj) => `<td class = ${obj.color}>${obj.cycle}</td>`)
+        let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`)
         displayRotations.push(`<tr><td class = "numbering">${count}.</td>${cellDisplay.join("")}</tr>`);
     });
         // displays Rotations
