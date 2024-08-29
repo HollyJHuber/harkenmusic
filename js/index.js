@@ -238,14 +238,16 @@ const noteSource = [
 
 /**
  * generates initial html display of the cycle only
+ * applies the rgba background-color directly
  */
 
 let cycleOnly = source.map((obj) => 
-    `<td>${obj.cycle}</td>`
+    `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`
+    
     );
 
 allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-<tr><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></div></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+<tr><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
 
 let audioContext;
 
@@ -274,18 +276,6 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('refresh').style.display = 'none';
     document.getElementById('goBack').style.display = 'none';    
-
-    // temp
-    const sequenceToPlay = _.slice(_.orderBy(source,["alternatingCycleOrder"], ["asc"]),1);
-
-    // Apply the background colors only to cells without "numbering" or "interval" classes
-    const tableCells = document.querySelectorAll("#combinations td:not(.numbering):not(.interval)");
-    tableCells.forEach((cell, index) => {
-        rgbaColor = `rgba(${source[index].color.r}, ${source[index].color.g}, ${source[index].color.b}, ${source[index].color.a}`;
-        cell.style.backgroundColor = rgbaColor;
- /*        myTest = sequenceToPlay.find(obj => obj.index === index);
-        console.log(index, cell, myTest.index, myTest.cycle); */
-    });
     
 });
 
@@ -353,19 +343,20 @@ function updateHTML () {
     const numNotes = document.querySelector("#notes").value;
 
     // display cycle only when 1 is selected
-    // TODO change this cycle text to a play button
     if (numNotes === 1 || numNotes === "1"){
         allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-        <tr><td class = "numbering">*</td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+        <tr><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
         document.querySelector("#combinations").innerHTML = allCombinations;
         document.getElementById('totalCombinations').innerHTML = "";
     } else {
         document.querySelector("#combinations").innerHTML = generateCombos(tonic, numNotes);
+        // TODO let's update generateCombos now
     }
 
 }
 
 // TODO problem is the createPermutations buttons on the regenerated combinations don't work!
+// TODO // GO BACK button is not generating play cycle button and table cell colors
 /**
  * called by GO BACK button to display the combinations again
  */
@@ -418,6 +409,7 @@ function goBack() {
 }
 
 /**
+ * NOT USED
  * displays the circle of fifths from makeSequence
  * in HTML 15 columns
  * @param {*} sequence is [6,1,8,3,10,5,0,7,2,9,4,11,6]
@@ -497,12 +489,11 @@ function generateCombos(t, k) {
     const mySource = _.cloneDeep(source);
     mySource.forEach((item, i) => {
         item.cycle = myCycle[i];
-       
+       // TODO // why are we using noteSource here when we've cloned source // ??????
         const matchIndex = noteSource.findIndex(info => info.cycle === item.cycle);
         const matchObject = noteSource[noteSource.findIndex(info => info.cycle === item.cycle)];
         const possibleNotes = matchObject.note;
         // const possibleNotes = noteSource[matchIndex].note; // ?? does this work?
-        item.color = matchObject.color;
         if (possibleNotes.length === 1){
             item.note = possibleNotes[0];
         } else {
@@ -704,7 +695,7 @@ function generateCombos(t, k) {
         _.forEach(mySource, (obj) => {
             if (_.includes(array, obj)){
                 // number displays obj.cycle; note displays obj.note
-                display.push(`<td class = ${obj.color}>${(matrixType === "number") ? obj.cycle : obj.note}</td>`);
+                display.push(`<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${(matrixType === "number") ? obj.cycle : obj.note}</td>`);
 
             } else {
                 display.push("<td></td>");
@@ -737,7 +728,7 @@ function generateCombos(t, k) {
     // number displays obj.cycle; note displays obj.note
 
     cycleDisplay = mySource.map((obj) => 
-    `<td class="${obj.color}">${matrixType === "note" ? obj.note : obj.cycle}</td>`
+    `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${matrixType === "note" ? obj.note : obj.cycle}</td>`
     );
 
    allCombinations.unshift(`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead><tr><td class = "numbering">*</td>${cycleDisplay.join("")}<td class = "interval">cycle</td></tr>`);
