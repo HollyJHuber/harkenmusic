@@ -295,6 +295,9 @@ function playCycle (audioContext) {
     // removes leading 6; orders by alternatingCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
     const sequenceToPlay = _.slice(_.orderBy(source,["alternatingCycleOrder"], ["asc"]),1);
 
+    // duplicate the first note to the end of the sequence
+    sequenceToPlay.push(_.first(sequenceToPlay));
+
     // retrieve cells without "numbering" or "interval" classes
     const tableCells = document.querySelectorAll("#combinations td:not(.numbering):not(.interval)");
 
@@ -335,6 +338,82 @@ function playCycle (audioContext) {
 }
 
 /**
+ * function to play any MIDI sequence
+ * sequence of notes, table cells
+ * @param noteSequence is a source array that must include the note.midi and note.color
+ * @param rowID is the HTML ID for the row
+ * @param tableID is the HTML ID for the table
+ * called by button from generateCombos()
+ */
+function playMIDISequence(rowID, noteSequence, tableID) {
+    console.log("playMIDISequence started!");
+
+      // disable the button to prevent spam tapping
+    //   document.getElementById('playButton').disabled = true; 
+
+    let sequenceToPlay = [];
+    // get the sequence to play, 
+    // if combination, change to cycle order
+    // remove extra 6 and duplicate first note as last note
+    if (tableID === "#totalCombinations") {
+        // cycle order
+        let firstNote = _.first(_.orderBy(noteSequence,["alternatingCycleOrder"], ["asc"]));
+        if (firstNote.alternatingCycleOrder < 0) {
+            // delete initial duplicate 6
+            sequenceToPlay = _.slice(_.orderBy(noteSequence,["alternatingCycleOrder"], ["asc"]),1);
+            //reset the firstNote
+            firstNote = _.first(sequenceToPlay);
+        } else {
+            sequenceToPlay = _.orderBy(noteSequence,["alternatingCycleOrder"], ["asc"]);
+        }
+         // modify the first note to MIDI + 12 and add to the end of the sequence
+         firstNote.midi += 12;
+        sequenceToPlay.push(firstNote);
+    }
+
+    // Assume rowID is the unique ID for each row
+const row = document.getElementById(rowID);
+
+// To access all the cells except those with the "grey-button" or "interval" class
+const tableCells = row.querySelectorAll('td:not(.grey-button):not(.interval)');
+
+    const duration = 0.75; // 1/8th note duration in seconds (60 / bpm / 2)
+    const velocity = 127; // how hard the note hits
+    MIDI.setVolume(0, 127);
+
+    sequenceToPlay.forEach((note, index) => {
+        const startTime = index * duration * 750; // Start time in milliseconds
+
+        // Set the color and play the note
+        setTimeout(() => {
+
+          // access the corresponding table cell
+          const cell = tableCells[note.index + 1];
+
+          // Change cell background alpha to indicate the note is playing
+            let colorObj = note.color;
+            colorObj.a = 0.9;
+            cell.style.backgroundColor = `rgba(${colorObj.r}, ${colorObj.g}, ${colorObj.b}, ${colorObj.a})`;
+
+           // play the note
+           MIDI.noteOn(0, note.midi, velocity, 0);
+
+           // Reset the color after the note duration
+           setTimeout(() => {
+                colorObj.a = 0.5;
+               cell.style.backgroundColor = `rgba(${colorObj.r}, ${colorObj.g}, ${colorObj.b}, ${colorObj.a})`;  
+               MIDI.noteOff(0, note.midi, duration);
+           }, duration * 750); // Delay matches the note duration in milliseconds
+        //    if (index === sequenceToPlay.length -1) {
+        //        // enable play button
+        //        document.getElementById('playButton').disabled = false; 
+        //    }
+       }, startTime); // Start the note and color change after the calculated start time
+   });
+
+}
+
+/**
  * function called by pull-down menus to generate all possible combinations 
 * tonic and the total number of notes in each combination
 */
@@ -345,7 +424,7 @@ function updateHTML () {
     // display cycle only when 1 is selected
     if (numNotes === 1 || numNotes === "1"){
         allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-        <tr><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+        <tr><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
         document.querySelector("#combinations").innerHTML = allCombinations;
         document.getElementById('totalCombinations').innerHTML = "";
     } else {
@@ -364,12 +443,12 @@ function goBack() {
     const tonic = document.querySelector("#tonicSelect").value;
     const numNotes = document.querySelector("#notes").value;
 
-    console.log(`tonic ${tonic}, numNotes ${numNotes}`)
+    // console.log(`tonic ${tonic}, numNotes ${numNotes}`)
 
     // display cycle only when 1 is selected
     if (numNotes === 1 || numNotes === "1"){
         allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-        <tr><td class = "numbering">*</td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+        <tr><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
         document.querySelector("#combinations").innerHTML = allCombinations;
         document.getElementById('totalCombinations').innerHTML = "";
     } else {
@@ -415,7 +494,7 @@ function goBack() {
  * @param {*} sequence is [6,1,8,3,10,5,0,7,2,9,4,11,6]
  */
 function displaySequence(sequence) {
-    return `<tr><td><label>*</label></td><td> ${_.join(sequence, "</td><td>")} </td><td><label>*</label></td>
+    return `<tr><td><label><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></label></td><td> ${_.join(sequence, "</td><td>")} </td><td><label>*</label></td>
     <tr></tr>`;
 }
 
@@ -683,11 +762,11 @@ function generateCombos(t, k) {
     // TODO // everything from here is just to display in HTML
 
     // reset
-    let comboCount = 0;
+    let count = 0;
     allCombinations = [];
 
     _.forEach(comboSorted, (array) => {
-        comboCount ++;
+        count ++;
 
         const display = [];    
         
@@ -702,22 +781,28 @@ function generateCombos(t, k) {
             }
         });
         // set the numbering for info object
-        array[array.length -1].countNo = comboCount;
+        array[array.length -1].countNo = count;
     
         // get the updated intervalLabels from info, the last array item
         // TODO // replacing intervalLabel with nothing until we can implement the play button
         const displayLabel = array[array.length -1].intervalLabel;
 
-        const button = `<button class="grey-button" onclick='createPermutationsTables(${comboCount}, ${JSON.stringify(array)})'>${comboCount}.</button>`;
+        // TODO // this button is where we would add the playMIDISequence AFTER the permutations have been created.
+        // TODO // temp play MIDI instead
+       
+
+        const button = `<button class="grey-button" onclick='playMIDISequence(${count}, ${JSON.stringify(_.initial(array))}, "#totalCombinations")'>${count}.</button>`;
+
+        // TODO // KEEP THIS CODE !!!!
+        // const button = `<button class="grey-button" onclick='createPermutationsTables(${count}, ${JSON.stringify(array)})'>${count}.</button>`;
 
         // TODO // replacing displayLabel with nothing until we can implement play button
-        allCombinations.push(`<tr id = ${comboCount}><td>${button}</td>${display.join("")}<td class = "interval"></td></tr>`);
-        // allCombinations.push(`<tr id = ${comboCount}><td>${button}</td>${display.join("")}<td class = "interval">${displayLabel.join(", ")}</td></tr>`);
+        allCombinations.push(`<tr id = ${count}><td>${button}</td>${display.join("")}<td class = "interval"></td></tr>`);
+        // allCombinations.push(`<tr><td>${button}</td>${display.join("")}<td class = "interval">${displayLabel.join(", ")}</td></tr>`);
         // first join replaces commas with html tags for table data
         // second join replaces commas with comma space
 
-        // (comboCount === 1) && console.log(array);
-            
+        // (count === 1) && console.log(array);  
     });
 
     document.querySelector("#title").innerHTML = `Select Combination`;
@@ -731,9 +816,9 @@ function generateCombos(t, k) {
     `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${matrixType === "note" ? obj.note : obj.cycle}</td>`
     );
 
-   allCombinations.unshift(`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead><tr><td class = "numbering">*</td>${cycleDisplay.join("")}<td class = "interval">cycle</td></tr>`);
+   allCombinations.unshift(`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead><tr><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleDisplay.join("")}<td class = "interval">cycle</td></tr>`);
 
-    document.querySelector("#totalCombinations").innerHTML = `${comboCount} ${comboLabels[k]}`;
+    document.querySelector("#totalCombinations").innerHTML = `${count} ${comboLabels[k]}`;
 
     return( _.join(allCombinations, "</tr><tr>"));
   }
@@ -819,7 +904,7 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
     _.forEach(rotations, (array) => {
         count ++;
         let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`)
-        commonRotations.push(`<tr><td class = "numbering">${count}.</td>${cellDisplay.join("")}</tr>`);
+        commonRotations.push(`<tr><td class = "numbering" id= ${count}>${count}.</td>${cellDisplay.join("")}</tr>`);
     });
 
     // TODO // this should be moved elsewhere ???
@@ -846,7 +931,7 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
     _.forEach(sourcePermutations, (array) => {
         count ++;
         let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`)
-        allPermutations.push(`<tr><td class = "numbering">${count}.</td>${cellDisplay.join("")}</tr>`);
+        allPermutations.push(`<tr><td class = "numbering" id = ${count}>${count}.</td>${cellDisplay.join("")}</tr>`);
 
     });
 
@@ -971,7 +1056,7 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     _.forEach(reflections, (array) => {
         count ++;
         let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`)
-        displayReflections.push(`<tr><td class = "numbering">${count}.</td>${cellDisplay.join("")}</tr>`);
+        displayReflections.push(`<tr><td class = "numbering" id=${count}>${count}.</td>${cellDisplay.join("")}</tr>`);
     });
         // displays Reflections
         return( _.join(displayReflections,  "</tr><tr>"));
@@ -1009,7 +1094,7 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     _.forEach(rotations, (array) => {
         count ++;
         let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`)
-        displayRotations.push(`<tr><td class = "numbering">${count}.</td>${cellDisplay.join("")}</tr>`);
+        displayRotations.push(`<tr><td class = "numbering" id=${count}>${count}.</td>${cellDisplay.join("")}</tr>`);
     });
         // displays Rotations
         return( _.join(displayRotations,  "</tr><tr>"));
