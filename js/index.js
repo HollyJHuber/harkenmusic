@@ -1,9 +1,11 @@
 
 /**
  * Harken Music (beta)
- * Copyright (c) 2024 Radical Data and Media LLC and The Harmonagon Project
+ * Copyright 2024 Mitchell Kahle and Holly J. Huber.
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
  */
-
 
 let matrixType = "number";
 let allCombinations = [];
@@ -277,6 +279,8 @@ document.addEventListener('DOMContentLoaded', function() {
 
     document.getElementById('refresh').style.display = 'none';
     document.getElementById('goBack').style.display = 'none';    
+    document.getElementById('goToBottom').style.display = 'none';
+    document.getElementById('goToTop').style.display = 'none';
     
 });
 
@@ -346,19 +350,14 @@ function playCycle (audioContext) {
  * @param noteSequence is a source array that must include the note.midi and note.color
  * @param rowID is the HTML ID for the row
  * @param tableID is the HTML ID for the table // TODO // may not be neeeded
- * called by play buttons for playing cycle or permutationCombo
+ * called by play buttons for playing cycle or permutationsCombo
  */
 function playMIDICycle(rowID, noteSequenceData, tableID = "#permutationsCombo") {
 
-    //"#permutationsCombo" "#combinations" "#totalCombinations"
-
-    console.log(`isMIDIplaying: ${isMIDIplaying}, rowID: ${rowID}, tableID: ${tableID}, typeOfData: ${typeof(noteSequenceData)}`);
     if (isMIDIplaying) { return; }
     isMIDIplaying = true;
 
     let noteSequenceToPlay = (typeof(noteSequenceData) === "string") ? JSON.parse(noteSequenceData) : noteSequenceData;
-
-    console.log(noteSequenceToPlay);
 
     // rowID is the unique ID for each row
     const row = document.getElementById(rowID);
@@ -419,13 +418,10 @@ function playMIDICycle(rowID, noteSequenceData, tableID = "#permutationsCombo") 
  */
 function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo") {
 
-    console.log(`isMIDIplaying: ${isMIDIplaying}, rowID: ${rowID}, tableID: ${tableID}, typeOfData: ${typeof(noteSequenceData)}`);
     if (isMIDIplaying) { return; }
     isMIDIplaying = true;
 
     let noteSequenceToPlay = (typeof(noteSequenceData) === "string") ? JSON.parse(noteSequenceData) : noteSequenceData;
-
-    console.log(noteSequenceToPlay);
 
     // rowID is the unique ID for each row
     const row = document.getElementById(rowID);
@@ -525,6 +521,8 @@ function goBack() {
     document.getElementById('combinations').style.display = 'block';
     document.getElementById('refresh').style.display = 'none';
     document.getElementById('goBack').style.display = 'none';
+    document.getElementById('goToBottom').style.display = 'none';
+    document.getElementById('goToTop').style.display = 'none';
     document.getElementById('permutationsCombo').style.display = 'none';
     document.getElementById('commonPermutationsTitle').style.display = 'none';
     document.getElementById('commonPermutations').style.display = 'none';
@@ -864,6 +862,8 @@ function generateCombos(t, k) {
     });
 
     document.querySelector("#title").innerHTML = `Select Combination`;
+    document.getElementById('goToBottom').style.display = 'inline';
+    document.getElementById('goToTop').style.display = 'inline';
 
     let cycleDisplay = [];
 
@@ -1021,6 +1021,8 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     document.querySelector("#title").innerHTML = `Selected Combination`;
     document.getElementById('refresh').style.display = 'inline';
     document.getElementById('goBack').style.display = 'inline';
+    document.getElementById('goToBottom').style.display = 'inline';
+    document.getElementById('goToTop').style.display = 'inline';
 
     // select combo to display in #permutationsCombo table and set up buttons
     // change note sequence to cycle order for permutationsCombo table only
@@ -1043,7 +1045,6 @@ function createPermutationsTables(comboCount, selectedComboArray) {
         .replace(/<button[^>]*>/, newButtonTag)
         .replace(/<tr[^>]*>/, `<tr id = "${rowID}">`);
           
-     console.log(allCombinations[0]);
      let permutationsComboCycle = allCombinations[0];
     // removes leading 6; orders by alternatingCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
     const cycleSequence = _.slice(_.orderBy(source,["alternatingCycleOrder"], ["asc"]),1);
@@ -1093,6 +1094,9 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
       document.getElementById('refresh').style.display = 'inline';
       document.getElementById('goBack').style.display = 'inline';
+      document.getElementById('goToTop').style.display = 'inline';
+      document.getElementById('goToBottom').style.display = 'inline';
+      
       document.getElementById('permutationsCombo').style.display = 'inline-block';
       document.getElementById('commonPermutationsTitle').style.display = 'block';
       document.getElementById('commonPermutations').style.display = 'inline-block';
@@ -1207,13 +1211,29 @@ function generateEmailLink(user, domain) {
     for (let i = 0; i < email.length; i++) {
         obfuscatedEmail += "&#" + email.charCodeAt(i) + ";";
     }
-    obfuscatedEmail = obfuscatedEmail + "?subject=Music%20Matrix";
+    obfuscatedEmail = obfuscatedEmail + "?subject=Harken%20Music";
     return obfuscatedEmail;
 }
 
-document.querySelector("#email").innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "'>Send email to Mitch Kahle for more information</a>"
+document.querySelector("#email").innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "'>Email for more information</a>"
 
+/**
+ * 
+ */
 function refreshPage() {
     // Reloads the current page
     location.reload();
+}
+
+/**
+ * 
+ */
+// Function to scroll to the top of the page
+function scrollToTop() {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+// Function to scroll to the bottom of the page
+function scrollToBottom() {
+    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }

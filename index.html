@@ -3,7 +3,7 @@
     <head>
         <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <title>MUSIC MATRIX</title>
+        <title>HARKEN MUSIC</title>
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
         <!-- polyfill -->
         <script src="./inc/shim/Base64.js" type="text/javascript"></script>
@@ -64,7 +64,7 @@
                 margin-bottom: 20px;
             }
             .divider {
-                border-top: 2px solid grey;  /* Creates a solid black line */
+                border-top: 2px solid aliceblue;  /* Creates a solid black line */
                 margin: 20px 0;              /* Adds 20px of space above and below the line */
                 width: 100%;                 /* Ensures the line spans the full width of its container */
             }
@@ -83,12 +83,12 @@
             }
             .footerLine{
                 font-size: 16px;
-                color: lightgrey;
+                color: aliceblue;
                 margin: 12px;
             }
             .grey-button {
             background-color: #999999;
-            color: white;
+            color: aliceblue;
             border: none;
             padding: 10px 20px;
             font-size: 16px;
@@ -106,7 +106,7 @@
 
         .play-button {
             background-color: #999999;
-            color: white;
+            color: aliceblue;
             border: none;
             padding: 5px 10px;
             font-size: 24px;
@@ -132,27 +132,31 @@
 /* IDs */
             #email, #totalCombinations, #totalPermutations{
                 font-size: 24px;
-                color: white;
+                color: aliceblue;
                 margin: 12px;
             }
             #tonicSelect {
                 display: none;
             }
+            #pageTitle {
+                font-size: 36px;
+                padding: 12px;
+                color: aliceblue;
+            }
             #title, #allPermutationsTitle, #commonPermutationsTitle, #reflectionsTitle, #rotationsTitle {
-                color: white;
+                color: aliceblue;
                 font-weight: bold;
                 font-size: 36px;
-                padding-top: 12px;
                 padding-bottom: 18px;
             }
             #combinations, #circleFifths, #permutationsCombo{
-                color: white;
+                color: aliceblue;
                 font-size: 36px;
                 text-align: center;
             }
             #subtitle {
                 font-size: 24px;
-                color: white;
+                color: aliceblue;
                 padding-bottom: 18px;
             }
             #allPermutations, #commonPermutations, #reflections, #rotations {
@@ -185,8 +189,13 @@
             }
     
         </style>
+        <!-- Copyright 2024 Mitchell Kahle and Holly J. Huber. -->
+        <!-- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: -->
+        <!-- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+        <!-- THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
     </head>
     <body>
+        <div id="pageTitle"><strong>HARKEN MUSIC</strong></div>
         <div id="title">Choose Combination</div>
         <select id="tonicSelect" name="tonicSelect" value= "0" onchange = "updateHTML(this.value, 1)"> 
             <option value = "0">0</option>
@@ -225,6 +234,7 @@
 
             <div><button class="grey-button" id="goBack" onclick="goBack()">GO BACK</button>
             <button class="grey-button" id="refresh" onclick="refreshPage()">START OVER</button>
+            <button class="grey-button" id="goToBottom" onclick="scrollToBottom()">Go to Bottom</button></div>
 
             <div id="totalCombinations"></div>
             <!-- heading, number of total combinations dynamically inserted here -->
@@ -250,7 +260,7 @@
             <div id="allPermutationsTitle"></div>
             <table id="allPermutations"></table>
             <!-- ALL permutations inserted here (if applicable)-->
-
+            <button class="grey-button" id="goToTop" onclick="scrollToTop()">Go to Top</button>
             <div class="divider"></div>
             
             <footer> <span id="email"></span>
