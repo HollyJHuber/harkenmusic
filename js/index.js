@@ -10,6 +10,10 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 let matrixType = "number";
 let allCombinations = [];
 let isMIDIplaying = false;
+let allCommonPermutations = [];
+let allReflections = [];
+let allRotations = [];
+let allAllPermutations = [];
 
 /**
  * source is an array of objects in cycle order for every item on the cycle; circle of fifths
@@ -417,63 +421,99 @@ function playMIDICycle(rowID, noteSequenceData, tableID = "#permutationsCombo") 
  * called by button from generateCombos()
  */
 function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo") {
+    return new Promise((resolve) => {
+        if (isMIDIplaying) { return; }
+        isMIDIplaying = true;
 
-    if (isMIDIplaying) { return; }
-    isMIDIplaying = true;
+        let noteSequenceToPlay = (typeof(noteSequenceData) === "string") ? JSON.parse(noteSequenceData) : noteSequenceData;
 
-    let noteSequenceToPlay = (typeof(noteSequenceData) === "string") ? JSON.parse(noteSequenceData) : noteSequenceData;
+        // console.log(noteSequenceData);
 
-    // rowID is the unique ID for each row
-    const row = document.getElementById(rowID);
+        // rowID is the unique ID for each row
+        const row = document.getElementById(rowID);
 
-    // TODO // temp code?? 
-    if (row === null) {
-        console.log("row is null");
-        isMIDIplaying = false;
-        return;
-    }
+        // TODO // temp code?? 
+        if (row === null) {
+            console.log("row is null");
+            isMIDIplaying = false;
+            resolve(); // resolve immediately if row is null
+            return;
+        }
 
-    // To access all td cells // first cell is button cell
- const tableCells = row.querySelectorAll('td');
+        // To access all td cells // first cell is button cell
+        const tableCells = row.querySelectorAll('td');
 
-    const duration = 0.75; // 1/8th note duration in seconds (60 / bpm / 2)
-    const velocity = 127; // how hard the note hits
-    MIDI.setVolume(0, 127);
+        const duration = 0.75; // 1/8th note duration in seconds (60 / bpm / 2)
+        const velocity = 127; // how hard the note hits
+        MIDI.setVolume(0, 127);
 
-    // sets delay for playing sequence
-    let delay = (tableID = "#permutationsCombo") ? 2 : 1;
+        // sets delay for playing sequence
+        let delay = (tableID === "#permutationsCombo") ? 2 : 1;
 
-    noteSequenceToPlay.forEach((note, index) => {
-        const startTime = (index + delay) * duration * 750; // Start time in milliseconds
+        let sequenceLength = noteSequenceToPlay.length;
 
-        // Set the color and play the note
-        setTimeout(() => {
-            // skip the first cell
-            let cell = tableCells[index + 1];
+        noteSequenceToPlay.forEach((note, index) => {
+            const startTime = (index + delay) * duration * 750; // Start time in milliseconds
 
-          // Change cell background alpha to indicate the note is playing
-            let colorObj = note.color;
-            colorObj.a = 0.9;
-            cell.style.backgroundColor = `rgba(${colorObj.r}, ${colorObj.g}, ${colorObj.b}, ${colorObj.a})`;
+            // Set the color and play the note
+            setTimeout(() => {
+                // skip the first cell
+                let cell = tableCells[index + 1];
 
-           // play the note
-           MIDI.noteOn(0, note.midi, velocity, 0);
+                // Change cell background alpha to indicate the note is playing
+                let colorObj = note.color;
+                colorObj.a = 0.9;
+                cell.style.backgroundColor = `rgba(${colorObj.r}, ${colorObj.g}, ${colorObj.b}, ${colorObj.a})`;
+    
+                // play the note
+                MIDI.noteOn(0, note.midi, velocity, 0);
 
-           // Reset the color after the note durationf
-           setTimeout(() => {
-            
-               colorObj.a = 0.5;
-               cell.style.backgroundColor = `rgba(${colorObj.r}, ${colorObj.g}, ${colorObj.b}, ${colorObj.a})`;   
-               
-               MIDI.noteOff(0, note.midi, duration);
-           }, duration * 750); // Delay matches the note duration in milliseconds
-           if (index === noteSequenceToPlay.length -1) {
-                 isMIDIplaying = false;
-           }
-       }, startTime); // Start the note and color change after the calculated start time
-   });
+                // Reset the color after the note duration
+                setTimeout(() => {
+                    colorObj.a = 0.5;
+                    cell.style.backgroundColor = `rgba(${colorObj.r}, ${colorObj.g}, ${colorObj.b}, ${colorObj.a})`;
 
+                    MIDI.noteOff(0, note.midi, duration);
+                }, duration * 750); // Delay matches the note duration in milliseconds
+
+                // When the last note finishes, resolve the promise
+                if (index === sequenceLength - 1) {
+                    setTimeout(() => {
+                        isMIDIplaying = false;
+                        resolve(); // Signal that the sequence is done
+                    }, duration * 750); // Wait for the last note to finish
+                }
+            }, startTime); // Start the note and color change after the calculated start time
+        });
+    });
 }
+
+// TODO // add a tableID?
+/**
+ * 
+ * @param {*} noteSequencesArray 
+ */
+async function playAllSequences(noteSequencesArray) {
+    for (let i = 0; i < noteSequencesArray.length; i++) {
+        const sequence = noteSequencesArray[i];
+        await playMIDISequence(sequence.rowID, sequence.notes, "#permutationsCombo"); // Adjust as needed
+    }
+    console.log("All sequences have been played");
+}
+
+function playAllCommonPermutations() {
+    playAllSequences(allCommonPermutations);
+}
+function playAllReflections() {
+    playAllSequences(allReflections);
+}
+function playAllRotations() {
+    playAllSequences(allRotations);
+}
+function playAllPermutations() {
+    playAllSequences(allAllPermutations);
+}
+
 
 /**
  * function called by pull-down menus to generate all possible combinations 
@@ -935,13 +975,13 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
  /**
   * generates COMMON permutations only
   * returns table of common permutations
-  * based on reflections
+  * based on reflections 
   */
  function generateCommonPermutations(combinationToPermute) {
  
-    const numRotations = combinationToPermute.length;
+    const numPermutations = combinationToPermute.length;
 
-    const rotationsAsc = _.times(numRotations, (i) => [
+    const permutationsAsc = _.times(numPermutations, (i) => [
         ..._.slice(combinationToPermute, i),
         ..._.slice(combinationToPermute, 0, i)
     ]);
@@ -952,20 +992,25 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
     reverseOrderFromTonic.unshift(reverseOrderFromTonic.pop());
 
 
-    // TODO // why does this say rotations, rotations, rotations when it's generating permutations?
-    const rotationsDesc = _.times(numRotations, (i) => [
+    const permutationsDesc = _.times(numPermutations, (i) => [
         ..._.slice(reverseOrderFromTonic, i),
         ..._.slice(reverseOrderFromTonic, 0, i)
     ]);
 
-    const rotations = _.concat(rotationsAsc, rotationsDesc);
     const commonPermutations = [];
+    
+    const permutationSeq = _.concat(permutationsAsc, permutationsDesc);
     count = 0;
-    _.forEach(rotations, (array) => {
+    _.forEach(permutationSeq, (array) => {
         count ++;
         let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`);
 
         const rowID = count + "-commonPermutations";
+        allCommonPermutations.push({
+            rowID: rowID,
+            notes: array
+        });
+
         const button = `<button class="grey-button" onclick='playMIDISequence("${rowID}", ${JSON.stringify(array)}, "#commonPermutations")'>${count}.</button>`;
         commonPermutations.push(`<tr id = ${rowID}><td>${button}</td>${cellDisplay.join("")}</tr>`);
     });
@@ -994,6 +1039,11 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
         count ++;
         let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`);
         const rowID = count + "-allPermutations";
+        // generates PLAY ALL array
+        allAllPermutations.push({
+            rowID: rowID,
+            notes: array
+        });
         const button = `<button class="grey-button" onclick='playMIDISequence("${rowID}", ${JSON.stringify(array)}, "#allPermutations")'>${count}.</button>`;
         allPermutations.push(`<tr id = ${rowID}><td>${button}</td>${cellDisplay.join("")}</tr>`);
     });
@@ -1149,6 +1199,11 @@ function createPermutationsTables(comboCount, selectedComboArray) {
         count ++;
         let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`);
         const rowID = count + "-reflections";
+        // generates PLAY ALL array
+        allReflections.push({
+            rowID: rowID,
+            notes: array
+        });
         const button = `<button class="grey-button" onclick='playMIDISequence("${rowID}", ${JSON.stringify(array)}, "#reflections")'>${count}.</button>`;
         displayReflections.push(`<tr id = ${rowID}><td>${button}</td>${cellDisplay.join("")}</tr>`);
     });
@@ -1189,6 +1244,11 @@ function createPermutationsTables(comboCount, selectedComboArray) {
         count ++;
         let cellDisplay = array.map((obj) => `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`);
         const rowID = count + "-rotations";
+        // generate PLAY ALL array
+        allRotations.push({
+            rowID: rowID,
+            notes: array
+        });
         const button = `<button class="grey-button" onclick='playMIDISequence("${rowID}", ${JSON.stringify(array)}, "#rotations")'>${count}.</button>`;
         displayRotations.push(`<tr id = ${rowID}><td>${button}</td>${cellDisplay.join("")}</tr>`);
     });

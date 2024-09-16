@@ -234,7 +234,8 @@
 
             <div><button class="grey-button" id="goBack" onclick="goBack()">GO BACK</button>
             <button class="grey-button" id="refresh" onclick="refreshPage()">START OVER</button>
-            <button class="grey-button" id="goToBottom" onclick="scrollToBottom()">Go to Bottom</button></div>
+            <button class="grey-button" id="goToBottom" onclick="scrollToBottom()">Go to Bottom</button>
+         </div>
 
             <div id="totalCombinations"></div>
             <!-- heading, number of total combinations dynamically inserted here -->
@@ -245,19 +246,20 @@
              <table id="permutationsCombo"></table>
              <!-- single combination for permutations dynamically inserted here -->
 
-             <div id="commonPermutationsTitle"></div>
+
+             <div><button class="grey-button" id="playAllCommon" onclick="playAllCommonPermutations()">PLAY ALL</button><div id="commonPermutationsTitle"></div></div>
              <table id="commonPermutations"></table>
              <!-- common permutations inserted here -->
 
-             <div id="reflectionsTitle"></div>
+             <div><button class="grey-button" id="playAllReflections" onclick="playAllReflections()">PLAY ALL</button><div id="reflectionsTitle"></div></div>
              <table id="reflections"></table>
             <!-- reflections inserted here -->
 
-            <div id="rotationsTitle"></div>
+            <div><button class="grey-button" id="playAllRotations" onclick = "playAllRotations()">PLAY ALL</button> <div id="rotationsTitle"></div></div>
             <table id="rotations"></table>
            <!-- rotations inserted here -->
 
-            <div id="allPermutationsTitle"></div>
+           <div><button class="grey-button" id="playAllPermutations" onclick = "playAllPermutations()">PLAY ALL</button> <div id="allPermutationsTitle"></div></div>
             <table id="allPermutations"></table>
             <!-- ALL permutations inserted here (if applicable)-->
             <button class="grey-button" id="goToTop" onclick="scrollToTop()">Go to Top</button>
