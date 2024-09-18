@@ -8,11 +8,8 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
  */
 
 let matrixType = "number";
-
-let isMIDIplaying = false;
-let stopMIDI = false;
-
 let allCombinations = [];
+let isMIDIplaying = false;
 let allCommonPermutations = [];
 let allReflections = [];
 let allRotations = [];
@@ -354,7 +351,7 @@ function playCycle (audioContext) {
  * function to play cycle order MIDI sequence
  * @param noteSequence is a source array that must include the note.midi and note.color
  * @param rowID is the HTML ID for the row
- * @param tableID is the HTML ID for the table
+ * @param tableID is the HTML ID for the table // TODO // may not be neeeded
  * called by play buttons for playing cycle or permutationsCombo
  */
 function playMIDICycle(rowID, noteSequenceData, tableID = "#permutationsCombo") {
@@ -413,27 +410,18 @@ function playMIDICycle(rowID, noteSequenceData, tableID = "#permutationsCombo") 
        }, startTime); // Start the note and color change after the calculated start time
    });
 }
-/**
- * stop MIDI sequence from playing
- */
-function stopPlayingMIDI() {
-    stopMIDI = true;
-}
 
 /**
  * function to play any MIDI sequence
  * @param noteSequence is a source array that must include the note.midi and note.color
  * @param rowID is the HTML ID for the row
- * @param tableID is the HTML ID for the table 
- * @param duration to speed up play all; 0.75 default 1/8th note duration in seconds (60 / bpm / 2)
+ * @param tableID is the HTML ID for the table // TODO // not needed??
  * called by button from generateCombos()
  */
-function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo", duration = 0.75) {
+function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo") {
     return new Promise((resolve) => {
         if (isMIDIplaying) { return; }
         isMIDIplaying = true;
-
-        // stopMIDI = false; // Reset stop flag
 
         let noteSequenceToPlay = (typeof(noteSequenceData) === "string") ? JSON.parse(noteSequenceData) : noteSequenceData;
 
@@ -453,6 +441,7 @@ function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo
         // To access all td cells // first cell is button cell
         const tableCells = row.querySelectorAll('td');
 
+        const duration = 0.75; // 1/8th note duration in seconds (60 / bpm / 2)
         const velocity = 127; // how hard the note hits
         MIDI.setVolume(0, 127);
 
@@ -463,11 +452,6 @@ function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo
 
         noteSequenceToPlay.forEach((note, index) => {
             const startTime = (index + delay) * duration * 750; // Start time in milliseconds
-
-      /*       if (stopMIDI) {
-                isMIDIplaying = false;
-                return; // Stop the sequence if stop flag is true
-            } */
 
             // Set the color and play the note
             setTimeout(() => {
@@ -508,13 +492,24 @@ function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo
  * @param {*} noteSequencesArray 
  */
 async function playAllSequences(noteSequencesArray) {
-    
     for (let i = 0; i < noteSequencesArray.length; i++) {
         const sequence = noteSequencesArray[i];
-        // speed up duration to 1/16 note
-        await playMIDISequence(sequence.rowID, sequence.notes, "#permutationsCombo", 0.375); 
+        await playMIDISequence(sequence.rowID, sequence.notes, "#permutationsCombo"); // Adjust as needed
     }
     console.log("All sequences have been played");
+}
+
+function playAllCommonPermutations() {
+    playAllSequences(allCommonPermutations);
+}
+function playAllReflections() {
+    playAllSequences(allReflections);
+}
+function playAllRotations() {
+    playAllSequences(allRotations);
+}
+function playAllPermutations() {
+    playAllSequences(allAllPermutations);
 }
 
 

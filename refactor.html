@@ -64,13 +64,15 @@
                 margin-bottom: 20px;
             }
             .divider {
-                border-top: 2px solid aliceblue;  /* Creates a solid black line */
-                margin: 40px 0;              /* Adds 20px of space above and below the line */
-                width: 100%;                 /* Ensures the line spans the full width of its container */
+                width: 75%; /* 75% of the parent container's width */
+                height: 2px; /* Adjust the height of the divider */
+                background-color: aliceblue; /* Set the divider color */
+                margin: 40px auto; /* Centers the divider */  
             }
+
             .interval {
-                font-size: 18px;
-                color: grey;
+                font-size: 18px !important;
+                color: grey !important;
                 width: 5%;
                 background-color:  white;
             }
@@ -152,7 +154,7 @@
                 font-size: 36px;
                 padding-bottom: 18px;
             }
-            #combinations, #circleFifths, #permutationsCombo{
+            #circleFifths{
                 color: aliceblue;
                 font-size: 36px;
                 text-align: center;
@@ -162,7 +164,7 @@
                 color: aliceblue;
                 padding-bottom: 18px;
             }
-            #allPermutations, #commonPermutations, #reflections, #rotations {
+            #combinations, #permutationsCombo, #allPermutations, #commonPermutations, #reflections, #rotations {
                 table-layout: auto;
                 background-color: white;
                 /* width: 90%; */
@@ -249,6 +251,7 @@
         <div><button class="grey-button hidden" id="goBack" onclick="goBack()">GO BACK</button>
             <button class="grey-button hidden" id="refresh" onclick="refreshPage()">START OVER</button>
             <button class="grey-button hidden" id="goToBottom" onclick="scrollToBottom()">Go to Bottom</button>
+
          </div>
 
              <div id="totalCombinations"></div>
@@ -263,20 +266,20 @@
         <!-- hiding content generated later -->
         <div id="generatedContent" class = "hidden">
 
-             <div><button class="grey-button" id="playAllCommon" onclick="playAllCommonPermutations()">PLAY ALL</button></div>
+             <div><button class="grey-button" id="playAllCommon" onclick="playAllSequences(allCommonPermutations)">PLAY ALL</button></div>
              <div id="commonPermutationsTitle"></div>   
              <table id="commonPermutations"></table>
              <!-- common permutations inserted here -->
 
-             <div><button class="grey-button" id="playAllReflections" onclick="playAllReflections()">PLAY ALL</button><div id="reflectionsTitle"></div></div>
+             <div><button class="grey-button" id="playAllReflections" onclick="playAllSequences(allReflections)">PLAY ALL</button><div id="reflectionsTitle"></div></div>
              <table id="reflections"></table>
             <!-- reflections inserted here -->
 
-            <div><button class="grey-button" id="playAllRotations" onclick = "playAllRotations()">PLAY ALL</button> <div id="rotationsTitle"></div></div>
+            <div><button class="grey-button" id="playAllRotations" onclick = "playAllSequences(allRotations)">PLAY ALL</button> <div id="rotationsTitle"></div></div>
             <table id="rotations"></table>
            <!-- rotations inserted here -->
 
-           <div class = ><button class="grey-button" id="playAllPermutations" onclick = "playAllPermutations()">PLAY ALL</button> <div id="allPermutationsTitle"></div></div>
+           <div class = ><button class="grey-button" id="playAllPermutations" onclick = "playAllSequences(allAllPermutations)">PLAY ALL</button> <div id="allPermutationsTitle"></div></div>
             <table id="allPermutations"></table>
             <!-- ALL permutations inserted here (if applicable)-->
         </div>
