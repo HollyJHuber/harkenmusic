@@ -125,10 +125,10 @@
         .hidden {
             display: none;
         }
-        .unhiddenBlock {
+        .showBlock {
             display: block;
         }
-        .unhiddenInline {
+        .showInline {
             display: inline;
         }
 
@@ -209,7 +209,7 @@
     </head>
     <body>
         <div id="pageTitle"><strong>HARKEN MUSIC</strong></div>
-        <div id="title" >Choose Combination</div>
+        <div id="title" class="hidden">Choose Combination</div>
         <select id="tonicSelect" class="hidden" name="tonicSelect" value= "0" onchange = "updateHTML(this.value, 1)"> 
             <option value = "0">0</option>
             <option value = "00">D</option>
@@ -230,8 +230,8 @@
             <option value = "11#">C&#x266f</option>
             <option value = "11b">D&#x266d</option>
         </select>
-        <div>
-        <select id="notes" name="notes" value= "1" onchange = "updateHTML(0, this.value)"> 
+        <div><button id="startButton" onclick="playCycle(audioContext)"><strong>START</strong></button>
+        <select id="notes" class="hidden" name="notes" value= "1" onchange = "updateHTML(0, this.value)"> 
             <option value = "1">1 (Cycle)</option>
             <option value = "2">2 (Intervals)</option>
             <option value = "3">3 (Triads)</option>
@@ -251,9 +251,7 @@
             <button class="grey-button hidden" id="goToBottom" onclick="scrollToBottom()">Go to Bottom</button>
          </div>
 
-       
-
-            <div id="totalCombinations"></div>
+             <div id="totalCombinations"></div>
             <!-- heading, number of total combinations dynamically inserted here -->
 
             <table id="combinations"></table>
@@ -262,7 +260,8 @@
              <table id="permutationsCombo"></table>
              <!-- single combination for permutations dynamically inserted here -->
         
-     
+        <!-- hiding content generated later -->
+        <div id="generatedContent" class = "hidden">
 
              <div><button class="grey-button" id="playAllCommon" onclick="playAllCommonPermutations()">PLAY ALL</button></div>
              <div id="commonPermutationsTitle"></div>   
@@ -280,15 +279,15 @@
            <div class = ><button class="grey-button" id="playAllPermutations" onclick = "playAllPermutations()">PLAY ALL</button> <div id="allPermutationsTitle"></div></div>
             <table id="allPermutations"></table>
             <!-- ALL permutations inserted here (if applicable)-->
-            <button class="grey-button hidden" id="goToTop" onclick="scrollToTop()">Go to Top</button>
-
-
+        </div>
+        <!-- end of generatedContent div -->
+       <div> <button class="grey-button hidden" id="goToTop" onclick="scrollToTop()">Go to Top</button></div>
             <div class="divider"></div>
             
             <footer> <span id="email"></span>
             <p class = "footerLine">Copyright 2024, Mitchell Kahle and Holly J. Huber, MIT License</p></footer>
         <!-- Javascript goes here so DOM is fully loaded-->
-        <script src="js/index.js"></script>
+        <script src="js/refactor.js"></script>
         <script>
         // Load MIDI and soundfont
         window.onload = function () {

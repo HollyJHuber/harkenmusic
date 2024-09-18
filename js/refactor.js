@@ -287,11 +287,11 @@ const comboLabels = ["", "Tonic", "Intervals", "Triads", "Tetrachords", "Pentato
 
 /**********  FUNCTIONS  ***********/
 /**
- * function called by the Play Cycle button
+ * function called by the Start and Play Cycle buttons
  * plays the circle of fifths
  */
 function playCycle (audioContext) {
-    console.log("MIDI sequence started!");
+    console.log("Cycle sequence started!");
     
     if (isMIDIplaying) { return; }
     isMIDIplaying = true;
@@ -340,7 +340,8 @@ function playCycle (audioContext) {
             if (index === cycleSequence.length -1) {
                 isMIDIplaying = false;
                 document.getElementById('startButton').classList.add("hidden");
-                document.getElementById('notes').classList.replace("hidden", "unhiddenInline");
+                document.getElementById('notes').classList.replace("hidden", "showInline");
+                document.getElementById('title').classList.replace("hidden", "showInline");
             }
         }, startTime); // Start the note and color change after the calculated start time
     });
@@ -899,8 +900,8 @@ function generateCombos(t, k) {
     });
 
     document.querySelector("#title").innerHTML = `Select Combination`;
-    document.getElementById('goToBottom').style.display = 'inline';
-    document.getElementById('goToTop').style.display = 'inline';
+    document.getElementById('goToBottom').classList.replace("hidden", "showInline");
+    document.getElementById('goToTop').classList.replace("hidden", "showInline");
 
     let cycleDisplay = [];
 
@@ -1066,10 +1067,12 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     const totalPermutationsCount = calculatePermutations(combinationOfNotesOnly.length);
 
     document.querySelector("#title").innerHTML = `Selected Combination`;
-    document.getElementById('refresh').style.display = 'inline';
-    document.getElementById('goBack').style.display = 'inline';
-    document.getElementById('goToBottom').style.display = 'inline';
-    document.getElementById('goToTop').style.display = 'inline';
+    document.getElementById('refresh').classList.replace("hidden", "showInline");
+    document.getElementById('goBack').classList.replace("hidden", "showInline");
+    document.getElementById('goToBottom').classList.replace("hidden", "showInline");
+    document.getElementById('goToTop').classList.replace("hidden", "showInline");
+    document.getElementById('generatedContent').classList.replace("hidden", "showInline");
+
 
     // select combo to display in #permutationsCombo table and set up buttons
     // change note sequence to cycle order for permutationsCombo table only
