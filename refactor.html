@@ -47,7 +47,8 @@
             select {
                 text-align: center;
                 font-size: 24px;
-                padding: 6px;
+                padding: 14px 6px;
+                margin: 20px 0px;
             }
 
             label {
@@ -188,7 +189,7 @@
                     background-color: white;
                 }
             }
-            #refresh {
+            #startOver {
                 margin: 10px auto; /* Adjust the top/bottom margin as needed */
                 text-align: center;
             }
@@ -212,7 +213,7 @@
     <body>
         <div id="pageTitle"><strong>HARKEN MUSIC</strong></div>
         <div id="title" class="hidden">Choose Combination</div>
-        <select id="tonicSelect" class="hidden" name="tonicSelect" value= "0" onchange = "updateHTML(this.value, 1)"> 
+        <div><select id="tonicSelect" class="hidden" name="tonicSelect" value= "0" onchange = "updateHTML(this.value, 1)"> 
             <option value = "0">0</option>
             <option value = "00">D</option>
             <option value = "1#">D&#x266f</option>
@@ -232,7 +233,7 @@
             <option value = "11#">C&#x266f</option>
             <option value = "11b">D&#x266d</option>
         </select>
-        <div><button id="startButton" onclick="playCycle(audioContext)"><strong>START</strong></button>
+        <button id="startButton" onclick="playCycle(audioContext)"><strong>START</strong></button>
         <select id="notes" class="hidden" name="notes" value= "1" onchange = "updateHTML(0, this.value)"> 
             <option value = "1">1 (Cycle)</option>
             <option value = "2">2 (Intervals)</option>
@@ -249,8 +250,9 @@
             </select>
         </div>
         <div><button class="grey-button hidden" id="goBack" onclick="goBack()">GO BACK</button>
-            <button class="grey-button hidden" id="refresh" onclick="refreshPage()">START OVER</button>
-            <button class="grey-button hidden" id="goToBottom" onclick="scrollToBottom()">Go to Bottom</button>
+            <button class="grey-button hidden" id="startOver" onclick="startOver()">START OVER</button>
+            <button class="grey-button hidden" id="goToBottom" onclick="scrollToBottom()">GO TO END</button>
+            <button class="grey-button hidden" id="stop" onclick="stopPlayingMIDI()">STOP</button>
 
          </div>
 
@@ -284,7 +286,7 @@
             <!-- ALL permutations inserted here (if applicable)-->
         </div>
         <!-- end of generatedContent div -->
-       <div> <button class="grey-button hidden" id="goToTop" onclick="scrollToTop()">Go to Top</button></div>
+       <div> <button class="grey-button hidden" id="goToTop" onclick="scrollToTop()">GO TO TOP</button></div>
             <div class="divider"></div>
             
             <footer> <span id="email"></span>
