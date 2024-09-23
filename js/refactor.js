@@ -570,7 +570,11 @@ async function playAllSequences(noteSequencesArray) {
     playButton.onclick = stopPlayingMIDI("#playAllCommon");
     playButton.innerHTML = "STOP";
 */
-    for (let i = 0; i < noteSequencesArray.length; i++) {
+
+    const numberOfNotes = noteSequencesArray.length;
+    console.log(noteSequencesArray);
+
+    for (let i = 0; i < numberOfNotes; i++) {
         const sequence = noteSequencesArray[i];
         // speed up duration to 1/16 note
         if (stopMIDI) {
@@ -1055,7 +1059,6 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
     // put the tonic first
     reverseOrderFromTonic.unshift(reverseOrderFromTonic.pop());
 
-
     const permutationsDesc = _.times(numPermutations, (i) => [
         ..._.slice(reverseOrderFromTonic, i),
         ..._.slice(reverseOrderFromTonic, 0, i)
@@ -1111,6 +1114,17 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
         const button = `<button class="grey-button" onclick='playMIDISequence("${rowID}", ${JSON.stringify(array)}, "#allPermutations")'>${count}.</button>`;
         allPermutations.push(`<tr id = ${rowID}><td>${button}</td>${cellDisplay.join("")}</tr>`);
     });
+
+    const numberOfNotes = document.querySelector("#notes").value;
+    // TODO // isn't there a better way to determine this value??
+
+     if (numberOfNotes < 4) {
+        // if intervals or triads, change the PLAY ALL buttons for Permutations
+        document.querySelector("#playAllCommon").onclick = function() {
+            playAllSequences(allAllPermutations);
+        };
+        document.querySelector("#playAllPermutations").style.display = 'none';
+     }
 
     // returns ALL Permutations
     return( _.join(allPermutations,  "</tr><tr>"));
@@ -1188,9 +1202,12 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
      if (numberOfNotes < 4) {
         // all permutations, no need for common but put the all where common would be!
-        document.querySelector("#commonPermutationsTitle").innerHTML = "All " + calculatePermutations(combinationOfNotesOnly.length) + " Permutations";
+        document.querySelector("#commonPermutationsTitle").innerHTML = "All Permutations";
 
         document.querySelector("#commonPermutations").innerHTML = generatePermutations(combinationOfNotesOnly);
+
+        // TODO // fix the play all button id="playAllCommon" 
+        // TODO // remove the play all button for id="playAllPermutations"
      } else {
        // common & all permutations
         if (combinationOfNotesOnly.length > 7) {
@@ -1207,6 +1224,7 @@ function createPermutationsTables(comboCount, selectedComboArray) {
         document.querySelector("#allPermutations").innerHTML = generatePermutations(combinationOfNotesOnly);
      }
 
+     // TODO fix this mess of style.display versus classList hidden
 
      document.querySelector("#reflectionsTitle").innerHTML = "Reflections";
       document.querySelector("#reflections").innerHTML = reflectOverMultipleAxes(combinationOfNotesOnly);

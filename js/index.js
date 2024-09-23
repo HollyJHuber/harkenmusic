@@ -294,7 +294,7 @@ const comboLabels = ["", "Tonic", "Intervals", "Triads", "Tetrachords", "Pentato
  * plays the circle of fifths
  */
 function playCycle (audioContext) {
-    console.log("Cycle sequence started!");
+    console.log("Harken Music started!");
     
     if (isMIDIplaying) { return; }
     isMIDIplaying = true;
@@ -340,12 +340,17 @@ function playCycle (audioContext) {
                 cell.style.backgroundColor = `rgba(${colorObj.r}, ${colorObj.g}, ${colorObj.b}, ${colorObj.a})`; 
                 MIDI.noteOff(0, note.midi, duration);
             }, duration * 750); // Delay matches the note duration in milliseconds
-            if (index === cycleSequence.length -1) {
-                isMIDIplaying = false;
-                document.getElementById('startButton').classList.add("hidden");
-                document.getElementById('notes').classList.replace("hidden", "showInline");
-                document.getElementById('title').classList.replace("hidden", "showInline");
-            }
+            
+            // delay display change?
+           setTimeout(() => {
+                if (index === cycleSequence.length -1) {
+                    isMIDIplaying = false;
+                    document.getElementById('startButton').classList.add("hidden");
+                    document.getElementById('notes').classList.replace("hidden", "showInline");
+                    document.getElementById('title').classList.replace("hidden", "showInline");
+                }
+             }, 500);
+  
         }, startTime); // Start the note and color change after the calculated start time
     });
 }
@@ -414,11 +419,38 @@ function playMIDICycle(rowID, noteSequenceData, tableID = "#permutationsCombo") 
    });
 }
 /**
- * stop MIDI sequence from playing
+ * sets flag to stop MIDI sequence from playing
+ * resets STOP button text & function
+ * @param buttonID to reset the button to PLAY ALL
+ * 
  */
-function stopPlayingMIDI() {
+function stopPlayingMIDI(buttonID) {
     stopMIDI = true;
+/*
+    let playButton = "";
+    console.log(buttonID);
+    switch (buttonID) {
+        case "#playAllCommon":
+            playButton = document.querySelector("#playAllCommon");
+            playButton.onclick = playAllSequences(allCommonPermutations);
+            break;
+        case "#playAllReflections":
+            playButton = document.querySelector("#playAllReflections");
+            playButton.onclick = playAllSequences(allReflections);
+            break;
+        case "#playAllRotations":
+            playButton = document.querySelector("#playAllRotations");
+            playButton.onclick = playAllSequences(allRotations);
+            break;
+        case "#playAllPermutations":
+            playButton = document.querySelector("#playAllPermutations");
+            playButton.onclick = playAllSequences(allAllPermutations);
+            break;
+    }
+    playButton.innerHTML = "PLAY ALL";
+    */
 }
+
 
 /**
  * function to play any MIDI sequence
@@ -432,8 +464,7 @@ function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo
     return new Promise((resolve) => {
         if (isMIDIplaying) { return; }
         isMIDIplaying = true;
-
-        // stopMIDI = false; // Reset stop flag
+        stopMIDI = false;
 
         let noteSequenceToPlay = (typeof(noteSequenceData) === "string") ? JSON.parse(noteSequenceData) : noteSequenceData;
 
@@ -464,11 +495,11 @@ function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo
         noteSequenceToPlay.forEach((note, index) => {
             const startTime = (index + delay) * duration * 750; // Start time in milliseconds
 
-      /*       if (stopMIDI) {
+             if (stopMIDI) {
+                console.log(`STOP MIDI SEQUENCE`);
                 isMIDIplaying = false;
-                return; // Stop the sequence if stop flag is true
-            } */
-
+                // return; // Stop the sequence if stop flag is true 
+            } else {
             // Set the color and play the note
             setTimeout(() => {
                 // skip the first cell
@@ -498,23 +529,64 @@ function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo
                     }, duration * 750); // Wait for the last note to finish
                 }
             }, startTime); // Start the note and color change after the calculated start time
+            }
         });
     });
 }
 
-// TODO // add a tableID?
 /**
- * 
+ * plays all the specified sequences
+ * transforms PLAY ALL button to STOP
+ * when over, resets PLAY ALL button
  * @param {*} noteSequencesArray 
  */
 async function playAllSequences(noteSequencesArray) {
-    
-    for (let i = 0; i < noteSequencesArray.length; i++) {
+    stopMIDI = false; // Reset stop flag
+    /*
+    let playButton = "";
+    console.log(noteSequencesArray[0].rowID);
+
+    switch (sequence.rowID) {
+        case "1-commonPermutations":
+            playButton = document.querySelector("#playAllCommon");
+            playButton.onclick = stopPlayingMIDI("#playAllCommon");
+            break;
+        case "1-reflections":
+            playButton = document.querySelector("#playAllReflections");
+            playButton.onclick = stopPlayingMIDI("#playAllReflections");
+
+            break;
+        case "1-rotations":
+            playButton = document.querySelector("#playAllRotations");
+            playButton.onclick = stopPlayingMIDI("#playAllRotations");
+
+            break;
+        case "1-allPermutations":
+            playButton = document.querySelector("#playAllPermutations");
+            playButton.onclick = stopPlayingMIDI("#playAllPermutations");
+            break;
+    }
+   const playButton = document.querySelector("#playAllCommon");
+    playButton.onclick = stopPlayingMIDI("#playAllCommon");
+    playButton.innerHTML = "STOP";
+*/
+
+    const numberOfNotes = noteSequencesArray.length;
+    console.log(noteSequencesArray);
+
+    for (let i = 0; i < numberOfNotes; i++) {
         const sequence = noteSequencesArray[i];
         // speed up duration to 1/16 note
-        await playMIDISequence(sequence.rowID, sequence.notes, "#permutationsCombo", 0.375); 
+        if (stopMIDI) {
+            console.log(`stop play all sequences`);
+            // TODO reset button
+            break;
+        }
+        await playMIDISequence(sequence.rowID, sequence.notes, "", 0.375); 
     }
     console.log("All sequences have been played");
+    stopMIDI = false; // reset flag
+    isMIDIplaying = false;
 }
 
 
@@ -561,20 +633,13 @@ function goBack() {
     }
     document.getElementById('notes').style.display = 'inline';
     document.getElementById('totalCombinations').style.display = 'block';
-    document.getElementById('combinations').style.display = 'block';
-    document.getElementById('refresh').style.display = 'none';
+    document.getElementById('combinations').style.display = 'inline-block';
+    document.getElementById('startOver').style.display = 'none';
     document.getElementById('goBack').style.display = 'none';
     document.getElementById('goToBottom').style.display = 'none';
     document.getElementById('goToTop').style.display = 'none';
     document.getElementById('permutationsCombo').style.display = 'none';
-    document.getElementById('commonPermutationsTitle').style.display = 'none';
-    document.getElementById('commonPermutations').style.display = 'none';
-    document.getElementById('reflectionsTitle').style.display = 'none';
-    document.getElementById('reflections').style.display = 'none';
-    document.getElementById('rotationsTitle').style.display = 'none';
-    document.getElementById('rotations').style.display = 'none';
-    document.getElementById('allPermutationsTitle').style.display = 'none';
-    document.getElementById('allPermutations').style.display = 'none';
+    document.getElementById('generatedContent').classList.replace("showInline", "hidden");
 
 }
 
@@ -994,7 +1059,6 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
     // put the tonic first
     reverseOrderFromTonic.unshift(reverseOrderFromTonic.pop());
 
-
     const permutationsDesc = _.times(numPermutations, (i) => [
         ..._.slice(reverseOrderFromTonic, i),
         ..._.slice(reverseOrderFromTonic, 0, i)
@@ -1051,6 +1115,17 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
         allPermutations.push(`<tr id = ${rowID}><td>${button}</td>${cellDisplay.join("")}</tr>`);
     });
 
+    const numberOfNotes = document.querySelector("#notes").value;
+    // TODO // isn't there a better way to determine this value??
+
+     if (numberOfNotes < 4) {
+        // if intervals or triads, change the PLAY ALL buttons for Permutations
+        document.querySelector("#playAllCommon").onclick = function() {
+            playAllSequences(allAllPermutations);
+        };
+        document.querySelector("#playAllPermutations").style.display = 'none';
+     }
+
     // returns ALL Permutations
     return( _.join(allPermutations,  "</tr><tr>"));
 }
@@ -1072,7 +1147,7 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     const totalPermutationsCount = calculatePermutations(combinationOfNotesOnly.length);
 
     document.querySelector("#title").innerHTML = `Selected Combination`;
-    document.getElementById('refresh').classList.replace("hidden", "showInline");
+    document.getElementById('startOver').classList.replace("hidden", "showInline");
     document.getElementById('goBack').classList.replace("hidden", "showInline");
     document.getElementById('goToBottom').classList.replace("hidden", "showInline");
     document.getElementById('goToTop').classList.replace("hidden", "showInline");
@@ -1114,17 +1189,25 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
     document.querySelector("#permutationsCombo").innerHTML = permutationsComboCycle + selectedCombination;
 
-      // this is what plays when the selected combination is displayed
-      playMIDICycle(rowID, JSON.stringify(notesToPlay), "#permutationsCombo");
+    // go to top of screen to show selected combo playing
+    scrollToTop();
+
+    setTimeout(() => {
+        // this is what plays when the selected combination is displayed
+        playMIDICycle(rowID, JSON.stringify(notesToPlay), "#permutationsCombo");
+    }, 500);
 
     const numberOfNotes = document.querySelector("#notes").value;
     // TODO // isn't there a better way to determine this value??
 
      if (numberOfNotes < 4) {
         // all permutations, no need for common but put the all where common would be!
-        document.querySelector("#commonPermutationsTitle").innerHTML = "All " + calculatePermutations(combinationOfNotesOnly.length) + " Permutations";
+        document.querySelector("#commonPermutationsTitle").innerHTML = "All Permutations";
 
         document.querySelector("#commonPermutations").innerHTML = generatePermutations(combinationOfNotesOnly);
+
+        // TODO // fix the play all button id="playAllCommon" 
+        // TODO // remove the play all button for id="playAllPermutations"
      } else {
        // common & all permutations
         if (combinationOfNotesOnly.length > 7) {
@@ -1141,13 +1224,15 @@ function createPermutationsTables(comboCount, selectedComboArray) {
         document.querySelector("#allPermutations").innerHTML = generatePermutations(combinationOfNotesOnly);
      }
 
+     // TODO fix this mess of style.display versus classList hidden
+
      document.querySelector("#reflectionsTitle").innerHTML = "Reflections";
       document.querySelector("#reflections").innerHTML = reflectOverMultipleAxes(combinationOfNotesOnly);
 
       document.querySelector("#rotationsTitle").innerHTML = "Rotations";
       document.querySelector("#rotations").innerHTML = rotateCombination(combinationOfNotesOnly);
 
-      document.getElementById('refresh').style.display = 'inline';
+      document.getElementById('startOver').style.display = 'inline';
       document.getElementById('goBack').style.display = 'inline';
       document.getElementById('goToTop').style.display = 'inline';
       document.getElementById('goToBottom').style.display = 'inline';
@@ -1169,7 +1254,7 @@ function createPermutationsTables(comboCount, selectedComboArray) {
         document.getElementById('combinations').style.display = 'none';
  }
 
- /**********  RELECTION FUNCTIONS  ***********/
+ /**********  REFLECTION FUNCTIONS  ***********/
 
  /**
   * helper function to reflect a sequence of notes
@@ -1282,17 +1367,37 @@ function generateEmailLink(user, domain) {
 
 document.querySelector("#email").innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "'>Email for more information</a>"
 
+// TODO  // this is a mess of style.display and classList.replace
 /**
- * 
- */
-function refreshPage() {
-    // Reloads the current page
-    location.reload();
+ * called by START OVER button to allow a new Notes selection
+ * without having to hit the START button to load the MIDI
+ *  */
+function startOver() {
+        // used to be refresh page;
+    // location.reload();
+
+    document.getElementById('notes').value= "1";
+    document.getElementById('notes').style.display = 'inline';
+    document.getElementById('title').innerHTML = "Choose Combination";
+
+    cycleOnly = source.map((obj) => 
+    `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`);
+    allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
+<tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+    document.querySelector("#combinations").innerHTML = allCombinations;
+    document.getElementById('combinations').style.display = 'inline-block';
+
+    document.getElementById('permutationsCombo').style.display = 'none';
+    document.getElementById('goBack').style.display = 'none';
+    document.getElementById('goToBottom').style.display = 'none';
+    document.getElementById('goToTop').style.display = 'none';
+    document.getElementById('startOver').style.display = 'none';
+    document.getElementById('generatedContent').classList.replace("showInline", "hidden");
+
+
 }
 
-/**
- * 
- */
+
 // Function to scroll to the top of the page
 function scrollToTop() {
     window.scrollTo({ top: 0, behavior: 'smooth' });
