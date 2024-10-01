@@ -14,9 +14,12 @@ let stopMIDI = false;
 
 let allCombinations = [];
 let allCommonPermutations = [];
+let allPermutations = [];
+let allAllPermutations = [];
 let allReflections = [];
 let allRotations = [];
-let allAllPermutations = [];
+
+// TODO // do we need allPermutations and allAllPermutations?? 
 
 /**
  * source is an array of objects in cycle order for every item on the cycle; circle of fifths
@@ -1039,13 +1042,14 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
     return results;
 }
 
-
  /**
   * generates COMMON permutations only
   * returns table of common permutations
   * based on reflections 
   */
  function generateCommonPermutations(combinationToPermute) {
+
+    allPermutations = [];
  
     const numPermutations = combinationToPermute.length;
 
@@ -1100,7 +1104,6 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
 
     let sourcePermutations = permute(combinationToPermute);
 
-    const allPermutations = [];
     count = 0;
     _.forEach(sourcePermutations, (array) => {
         count ++;
@@ -1117,13 +1120,14 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
 
     const numberOfNotes = document.querySelector("#notes").value;
     // TODO // isn't there a better way to determine this value??
-
+console.log(`number of Notes: ${numberOfNotes}`);
      if (numberOfNotes < 4) {
         // if intervals or triads, change the PLAY ALL buttons for Permutations
         document.querySelector("#playAllCommon").onclick = function() {
             playAllSequences(allAllPermutations);
         };
         document.querySelector("#playAllPermutations").style.display = 'none';
+        document.querySelector("#allPermutations").style.display = 'none';
      }
 
     // returns ALL Permutations
@@ -1199,12 +1203,16 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
     const numberOfNotes = document.querySelector("#notes").value;
     // TODO // isn't there a better way to determine this value??
+    console.log(`number of Notes: ${numberOfNotes}`);
+
 
      if (numberOfNotes < 4) {
         // all permutations, no need for common but put the all where common would be!
         document.querySelector("#commonPermutationsTitle").innerHTML = "All Permutations";
 
         document.querySelector("#commonPermutations").innerHTML = generatePermutations(combinationOfNotesOnly);
+        document.querySelector("#allPermutationsTitle").style.display = 'none';
+        document.querySelector("#allPermutations").style.display = 'none';
 
         // TODO // fix the play all button id="playAllCommon" 
         // TODO // remove the play all button for id="playAllPermutations"
@@ -1222,6 +1230,10 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
         // display all permutations
         document.querySelector("#allPermutations").innerHTML = generatePermutations(combinationOfNotesOnly);
+        document.getElementById('allPermutations').style.display = 'inline-block';
+        document.getElementById('allPermutationsTitle').style.display = 'block';
+        document.querySelector("#playAllPermutations").style.display = 'inline-block';
+
      }
 
      // TODO fix this mess of style.display versus classList hidden
@@ -1244,8 +1256,8 @@ function createPermutationsTables(comboCount, selectedComboArray) {
       document.getElementById('reflections').style.display = 'inline-block';
       document.getElementById('rotationsTitle').style.display = 'block';
       document.getElementById('rotations').style.display = 'inline-block';
-      document.getElementById('allPermutationsTitle').style.display = 'block';
-      document.getElementById('allPermutations').style.display = 'inline-block';
+    //   document.getElementById('allPermutationsTitle').style.display = 'block';
+    //   document.getElementById('allPermutations').style.display = 'inline-block';
 
         // hide combinations data by id
         document.getElementById('tonicSelect').style.display = 'none';
@@ -1376,14 +1388,21 @@ function startOver() {
         // used to be refresh page;
     // location.reload();
 
-    document.getElementById('notes').value= "1";
-    document.getElementById('notes').style.display = 'inline';
-    document.getElementById('title').innerHTML = "Choose Combination";
-
     cycleOnly = source.map((obj) => 
     `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`);
     allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
 <tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+
+    allCommonPermutations = [];
+    allPermutations = [];
+    allAllPermutations = [];
+    allReflections = [];
+    allRotations = [];
+
+    document.getElementById('notes').value= "1";
+    document.getElementById('notes').style.display = 'inline';
+    document.getElementById('title').innerHTML = "Choose Combination";
+
     document.querySelector("#combinations").innerHTML = allCombinations;
     document.getElementById('combinations').style.display = 'inline-block';
 

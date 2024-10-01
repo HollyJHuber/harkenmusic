@@ -429,29 +429,40 @@ function playMIDICycle(rowID, noteSequenceData, tableID = "#permutationsCombo") 
  */
 function stopPlayingMIDI(buttonID) {
     stopMIDI = true;
-/*
-    let playButton = "";
-    console.log(buttonID);
+
+    const numberOfNotes = document.querySelector("#notes").value;
+
+    console.log(`stop playingMIDI ${buttonID}, number of notes ${numberOfNotes}`);
     switch (buttonID) {
-        case "#playAllCommon":
-            playButton = document.querySelector("#playAllCommon");
-            playButton.onclick = playAllSequences(allCommonPermutations);
+        case "playAllCommon":
+            if (numberOfNotes < 4) {
+                document.querySelector("#playAllCommon").onclick = function() {
+                    playAllSequences(allAllPermutations);
+                };
+                document.querySelector("#playAllCommon").innerHTML = "PLAY ALL";
+
+            } else {
+                document.querySelector("#playAllCommon").onclick = function() { playAllSequences(allCommonPermutations) };
+                document.querySelector("#playAllCommon").innerHTML = "PLAY ALL";
+            }
             break;
-        case "#playAllReflections":
-            playButton = document.querySelector("#playAllReflections");
-            playButton.onclick = playAllSequences(allReflections);
+        case "playAllReflections":
+            document.querySelector("#playAllReflections").onclick = function() { playAllSequences(allReflections) };
+            document.querySelector("#playAllReflections").innerHTML = "PLAY ALL";
+
             break;
-        case "#playAllRotations":
-            playButton = document.querySelector("#playAllRotations");
-            playButton.onclick = playAllSequences(allRotations);
+        case "playAllRotations":
+            playButton = document.querySelector("#playAllRotations").onclick = function() { playAllSequences(allRotations) };
+            document.querySelector("#playAllRotations").innerHTML = "PLAY ALL";
+
             break;
-        case "#playAllPermutations":
-            playButton = document.querySelector("#playAllPermutations");
-            playButton.onclick = playAllSequences(allAllPermutations);
+        case "playAllPermutations":
+            document.querySelector("#playAllPermutations").onclick = function() { playAllSequences(allAllPermutations) };
+            document.querySelector("#playAllPermutations").innerHTML = "PLAY ALL";
+
             break;
     }
-    playButton.innerHTML = "PLAY ALL";
-    */
+    
 }
 
 
@@ -545,36 +556,38 @@ function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo
  */
 async function playAllSequences(noteSequencesArray) {
     stopMIDI = false; // Reset stop flag
-    /*
-    let playButton = "";
-    console.log(noteSequencesArray[0].rowID);
+    const numberOfNotes = noteSequencesArray[0].notes.length;
 
-    switch (sequence.rowID) {
+    switch (noteSequencesArray[0].rowID) {
         case "1-commonPermutations":
-            playButton = document.querySelector("#playAllCommon");
-            playButton.onclick = stopPlayingMIDI("#playAllCommon");
+            document.querySelector("#playAllCommon").onclick = function() {
+            stopPlayingMIDI("playAllCommon")};
+            document.querySelector("#playAllCommon").innerHTML = "STOP";
             break;
         case "1-reflections":
-            playButton = document.querySelector("#playAllReflections");
-            playButton.onclick = stopPlayingMIDI("#playAllReflections");
-
+            document.querySelector("#playAllReflections").onclick = function() {
+            stopPlayingMIDI("playAllReflections")};
+            document.querySelector("#playAllReflections").innerHTML = "STOP";
             break;
-        case "1-rotations":
-            playButton = document.querySelector("#playAllRotations");
-            playButton.onclick = stopPlayingMIDI("#playAllRotations");
 
+        case "1-rotations":
+            document.querySelector("#playAllRotations").onclick = function() {
+            stopPlayingMIDI("playAllRotations")};
+            document.querySelector("#playAllRotations").innerHTML = "STOP";
             break;
         case "1-allPermutations":
-            playButton = document.querySelector("#playAllPermutations");
-            playButton.onclick = stopPlayingMIDI("#playAllPermutations");
+            if (numberOfNotes < 4) {
+                document.querySelector("#playAllCommon").onclick = function() {
+                    stopPlayingMIDI("playAllCommon")};
+                    document.querySelector("#playAllCommon").innerHTML = "STOP";
+            } else {
+                document.querySelector("#playAllPermutations").onclick =    function(){ stopPlayingMIDI("playAllPermutations")};
+                document.querySelector("#playAllPermutations").innerHTML = "STOP";
+            }
+
             break;
     }
-   const playButton = document.querySelector("#playAllCommon");
-    playButton.onclick = stopPlayingMIDI("#playAllCommon");
-    playButton.innerHTML = "STOP";
-*/
 
-    const numberOfNotes = noteSequencesArray.length;
     console.log(noteSequencesArray);
 
     for (let i = 0; i < numberOfNotes; i++) {
@@ -1413,6 +1426,18 @@ function startOver() {
     document.getElementById('startOver').style.display = 'none';
     document.getElementById('generatedContent').classList.replace("showInline", "hidden");
 
+    // reset the play all buttons 
+    document.querySelector("#playAllCommon").onclick = function() { playAllSequences(allCommonPermutations) };
+     document.querySelector("#playAllCommon").innerHTML = "PLAY ALL";
+
+     document.querySelector("#playAllReflections").onclick = function() { playAllSequences(allReflections) };
+     document.querySelector("#playAllReflections").innerHTML = "PLAY ALL";
+
+     playButton = document.querySelector("#playAllRotations").onclick = function() { playAllSequences(allRotations) };
+     document.querySelector("#playAllRotations").innerHTML = "PLAY ALL";
+
+     document.querySelector("#playAllPermutations").onclick = function() { playAllSequences(allAllPermutations) };
+     document.querySelector("#playAllPermutations").innerHTML = "PLAY ALL";
 
 }
 
