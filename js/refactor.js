@@ -1451,3 +1451,8 @@ function scrollToTop() {
 function scrollToBottom() {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
+
+// Function to display the modal
+function displayModal() {
+    document.getElementById('Info').style.display="block";
+}
