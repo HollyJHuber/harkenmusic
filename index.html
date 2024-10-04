@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <title>HARKEN MUSIC</title>
         <!-- styles --> <!--  order is important, last style sheet read in will take precedence  -->
+        <link rel="stylesheet" href="css/w3.css">
         <link rel="stylesheet" href="css/harken.css">
         <!-- lodash-->
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
@@ -105,9 +106,39 @@
         <!-- end of generatedContent div -->
        <div> <button class="grey-button hidden" id="goToTop" onclick="scrollToTop()">GO TO TOP</button></div>
             <div class="divider"></div>
+            <div><button class="grey-button" id="displayModal"onclick="displayModal()"><strong>ABOUT</strong></button></div>
             
             <footer> <span id="email"></span>
             <p class = "footerLine">Copyright 2024, Mitchell Kahle and Holly J. Huber, MIT License</p></footer>
+
+
+<!--  start modal tabs for ABOUT  -->
+<div id="Info" class="w3-modal">
+    <div class="w3-modal-content w3-grey w3-card-4 w3-animate-zoom">
+        <header class="w3-container">
+            <span onclick="document.getElementById('Info').style.display='none'" class="w3-closebtn w3-padding-top modal-close"> &times;</span>
+            <h2>HARKEN MUSIC</h2>
+        </header>
+        <div  class="w3-container w3-padding-bottom discover" style="display: block;">
+                <p>Harken Music is a new first-ever mathmatical solution for calculating all 1,193,556,233 harmonic combinations and permutations possible in 12-tone music.</p>
+
+                <p>Please read the step-by-step description of the math below, and then use the open-source HTML/Javascript demo* at harkenmusic.com to see and hear everything yourself.</p>
+
+                <p>*Note: a desktop or laptop computer and current web browser (Chrome, Safari, etc.) are required for using the demo; however there are no downloads, sign-up, or subscription requirements.</p>
+
+                <p>Using the demo, you can choose any combination size (from 1 to 12 notes) from the pulldown menu; then select a combination from the numbered list to see and hear all permutations, reflections (inversions), and rotations (transpositions).</p>
+
+                <h2>Combinations</h2>
+
+                <p>There are 2,048 possible combinations (n) for each of the 12 potential tonic notes.</p>
+
+                <p>In this system, the tonic [0] is fixed and required in every combination—thus we use the binomial coefficient “11 choose n for n = 1 to 11” to calculate the following.</p>
+            </div>
+        </div>
+    </div>
+</div>
+<!--  end modal tabs for ABOUT menu  -->
+
         <!-- Javascript goes here so DOM is fully loaded-->
         <script src="js/index.js"></script>
         <script>

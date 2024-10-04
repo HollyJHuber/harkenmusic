@@ -557,49 +557,56 @@ function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo
 async function playAllSequences(noteSequencesArray) {
     stopMIDI = false; // Reset stop flag
     const numberOfNotes = noteSequencesArray[0].notes.length;
+    let buttonID = "";
 
     switch (noteSequencesArray[0].rowID) {
         case "1-commonPermutations":
             document.querySelector("#playAllCommon").onclick = function() {
             stopPlayingMIDI("playAllCommon")};
             document.querySelector("#playAllCommon").innerHTML = "STOP";
+            buttonID = "playAllCommon";
             break;
         case "1-reflections":
             document.querySelector("#playAllReflections").onclick = function() {
             stopPlayingMIDI("playAllReflections")};
             document.querySelector("#playAllReflections").innerHTML = "STOP";
+            buttonID = "playAllReflections";
             break;
 
         case "1-rotations":
             document.querySelector("#playAllRotations").onclick = function() {
             stopPlayingMIDI("playAllRotations")};
             document.querySelector("#playAllRotations").innerHTML = "STOP";
+            buttonID = "playAllRotations";
             break;
         case "1-allPermutations":
             if (numberOfNotes < 4) {
                 document.querySelector("#playAllCommon").onclick = function() {
                     stopPlayingMIDI("playAllCommon")};
                     document.querySelector("#playAllCommon").innerHTML = "STOP";
+                    buttonID = "playAllCommon";
             } else {
                 document.querySelector("#playAllPermutations").onclick =    function(){ stopPlayingMIDI("playAllPermutations")};
                 document.querySelector("#playAllPermutations").innerHTML = "STOP";
+                buttonID = "playAllPermutations";
             }
-
             break;
     }
 
     console.log(noteSequencesArray);
 
-    for (let i = 0; i < numberOfNotes; i++) {
+    for (let i = 0; i < noteSequencesArray.length; i++) {
         const sequence = noteSequencesArray[i];
         // speed up duration to 1/16 note
         if (stopMIDI) {
             console.log(`stop play all sequences`);
-            // TODO reset button
+            // TODO reset button // ??
             break;
         }
         await playMIDISequence(sequence.rowID, sequence.notes, "", 0.375); 
     }
+    
+    stopPlayingMIDI(buttonID);
     console.log("All sequences have been played");
     stopMIDI = false; // reset flag
     isMIDIplaying = false;
