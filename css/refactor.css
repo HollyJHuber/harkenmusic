@@ -6,6 +6,23 @@ body  {
     text-align: center;
     font-size: 36px;
 }
+
+h2 {
+    font-size: 24px;
+    font-weight: bold;
+    text-align: left;
+    padding: 12px 0px 0px 0px;
+    margin: 0;
+}
+
+h3 {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    padding: 9px 0px 0px 0px;
+    margin: 0;
+}
+
 table {
     background-color: rgba(255, 255, 255, 1);
     border-collapse: 1px solid  #cccccc;
@@ -37,7 +54,40 @@ label {
 a {
     color: lightgrey;
 }
-/* class */
+
+ul {
+    font-size: 18px;
+    font-weight: bold;
+    text-align: left;
+    list-style-type: disc;
+    margin-left: 36px;
+}
+ul li {
+    text-indent: 12px; /* Adjust the value as needed */
+}
+
+ol {
+    font-size: 18px;
+    font-weight: normal;
+    text-align: left;
+    margin-left: 48px;
+}
+
+ol li {
+    text-indent: 12px; /* Adjust the value as needed */
+}
+li {
+    font-weight: normal;
+    text-align: left;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+li:first-child {
+    margin-top: 8px;
+  }
+
+/* classes */
 .title {
     font-size: 48px;
     margin-bottom: 20px;
@@ -112,6 +162,39 @@ display: block;
 .showInline {
 display: inline;
 }
+
+/* MODAL CLASSES */
+    /* Modal box */
+    .modal-content {
+        max-height: 80vh; /* Set max height to 80% of the viewport height */
+        overflow-y: auto; /* Scroll only within the modal content */
+      }
+  
+      /* Lock the background when the modal is open */
+      body.modal-open {
+        overflow: hidden;
+      }
+      * {
+        margin: 0;
+        padding: 0;
+        text-indent: 0;
+    }
+
+    /* modal text - the bulk/body of the modal content*/
+    .modal-text {
+        text-align: left;
+        font-size: 18px;
+        line-height: 1.5;
+        padding: 9px 0px 0px 0px;
+    }
+
+    .modal-grey-bkgrd {
+        background-color: aliceblue;
+        padding: 9px;
+        margin: 3px;
+    }
+
+    
 
 /* IDs */
 #email, #totalCombinations, #totalPermutations{

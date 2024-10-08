@@ -1459,7 +1459,37 @@ function scrollToBottom() {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
 
-// Function to display the modal
-function displayModal() {
-    document.getElementById('Info').style.display="block";
-}
+// MODAL
+
+document.getElementById('openModalButton').addEventListener('click', function(event) {
+    event.stopPropagation();  // Prevent the click from triggering outside click logic
+    openModal();
+  });
+
+  function openModal() {
+    // Display the modal and prevent background scroll
+    document.getElementById('AboutModal').style.display = 'block';
+    document.body.classList.add('modal-open');
+
+    // Close the modal if user clicks outside the modal content
+    window.addEventListener('click', outsideClickHandler);
+  }
+
+  function closeModal() {
+    // Hide the modal and restore background scroll
+    document.getElementById('AboutModal').style.display = 'none';
+    document.body.classList.remove('modal-open');
+
+    // Remove the event listener to avoid it running after the modal is closed
+    window.removeEventListener('click', outsideClickHandler);
+  }
+
+  function outsideClickHandler(event) {
+    const modal = document.getElementById('AboutModal');
+    const modalContent = document.querySelector('.w3-modal-content');
+
+    // Check if the click was outside the modal content
+    if (!modalContent.contains(event.target) && modal.style.display === 'block') {
+      closeModal();
+    }
+  }

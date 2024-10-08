@@ -6,7 +6,7 @@
         <title>HARKEN MUSIC</title>
         <!-- styles --> <!--  order is important, last style sheet read in will take precedence  -->
         <link rel="stylesheet" href="css/w3.css">
-        <link rel="stylesheet" href="css/harken.css">
+        <link rel="stylesheet" href="css/refactor.css">
         <!-- lodash-->
         <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
         <!-- polyfill -->
@@ -106,35 +106,136 @@
         <!-- end of generatedContent div -->
        <div> <button class="grey-button hidden" id="goToTop" onclick="scrollToTop()">GO TO TOP</button></div>
             <div class="divider"></div>
-            <div><button class="grey-button" id="displayModal"onclick="displayModal()"><strong>ABOUT</strong></button></div>
+            <div><button class="grey-button" id="openModalButton" onclick="openModal()"><strong>ABOUT</strong></button></div>
             <footer> <span id="email"></span>
             <p class = "footerLine">Copyright 2024, Mitchell Kahle and Holly J. Huber, MIT License</p></footer>
 
 <!--  start modal tabs for ABOUT  -->
-<div id="Info" class="w3-modal">
-    <div class="w3-modal-content w3-grey w3-card-4 w3-animate-zoom">
-        <header class="w3-container">
-            <span onclick="document.getElementById('Info').style.display='none'" class="w3-closebtn w3-padding-top modal-close"> &times;</span>
-            <h2>HARKEN MUSIC</h2>
+<div id="AboutModal" class="w3-modal">
+    <div class="w3-modal-content modal-content w3-card-4 w3-animate-zoom">
+        <header class="w3-container w3-grey">
+            <span onclick="closeModal()" class="w3-closebtn w3-padding-top modal-close"> &times;</span>
+            <h1>HARKEN MUSIC</h1>
         </header>
-        <div  class="w3-container w3-padding-bottom discover" style="display: block;">
-                <p>Harken Music is a new first-ever mathmatical solution for calculating all 1,193,556,233 harmonic combinations and permutations possible in 12-tone music.</p>
-
-                <p>Please read the step-by-step description of the math below, and then use the open-source HTML/Javascript demo* at harkenmusic.com to see and hear everything yourself.</p>
-
-                <p>*Note: a desktop or laptop computer and current web browser (Chrome, Safari, etc.) are required for using the demo; however there are no downloads, sign-up, or subscription requirements.</p>
-
-                <p>Using the demo, you can choose any combination size (from 1 to 12 notes) from the pulldown menu; then select a combination from the numbered list to see and hear all permutations, reflections (inversions), and rotations (transpositions).</p>
-
+        <div class="w3-container w3-padding-bottom ">    
+            <section class="modal-text">
+                <p class="modal-text"><strong>Harken Music</strong> is a new, first-ever mathematical solution for calculating all 1,193,556,233 harmonic combinations and permutations possible in 12-tone music.</p>
+                <p class="modal-text">Please read the step-by-step description of the math below, and then use the open-source HTML/JavaScript demo at harkenmusic.com to see and hear everything yourself.</p>
+                <p class="modal-text modal-grey-bkgrd"><em>Note: A desktop or laptop computer and current web browser (Chrome, Safari, etc.) are required for using the demo; however, there are no downloads, sign-up, or subscription requirements.</em></p>
+                <p class="modal-text">Using the demo, you can choose any combination size (from 1 to 12 notes) from the pulldown menu; then select a combination from the numbered list to see and hear all permutations, reflections (inversions), and rotations (transpositions).</p>
+            </section>
+    
+            <section>
                 <h2>Combinations</h2>
+                <p class="modal-text">There are 2,048 possible combinations (<em>n</em>) for each of the 12 potential tonic notes.</p>
+                <p class="modal-text">In this system, the tonic [0] is fixed and required in every combination—thus we use the binomial coefficient “11 choose <em>n</em> for <em>n</em> = 1 to 11” to calculate the following:</p>
+                <ul>
+                    <li>Tonic (1): 1</li>
+                    <li>Intervals (2): 11</li>
+                    <li>Triads (3): 55</li>
+                    <li>Tetrachords (4): 165</li>
+                    <li>Pentatonics (5): 330</li>
+                    <li>Hexatonics (6): 462</li>
+                    <li>Heptatonics (7): 462</li>
+                    <li>Octatonics (8): 330</li>
+                    <li>Nonatonics (9): 165</li>
+                    <li>Decatonics (10): 55</li>
+                    <li>Hendecatonics (11): 11</li>
+                    <li>Chromatic Scale (12): 1</li>
+                </ul>
+                <p class="modal-text">The sum of these results is 2,048, and because any of 12 notes can be used for the fixed tonic [0], the total of all possible unique harmonic combinations is 24,576 (2,048 x 12).</p>
+            </section>
+    
+            <section>
+                <h2>Permutations</h2>
+                <p class="modal-text">When order is considered, the total expands to include 1,193,556,233 possible permutations of 24,576 combinations. Using factorials (<em>n!</em>), we calculate the total number of permutations possible for each combination size as follows:</p>
+                <ul>
+                    <li>1! = 1 x 1 = 1 tonic</li>
+                    <li>2! = 2 x 11 = 22 intervals</li>
+                    <li>3! = 6 x 55 = 330 triads</li>
+                    <li>4! = 24 x 165 = 3,960 tetrachords</li>
+                    <li>5! = 120 x 330 = 39,600 pentatonics</li>
+                    <li>6! = 720 x 462 = 332,640 hexatonics</li>
+                    <li>7! = 5,040 x 462 = 2,328,480 heptatonics</li>
+                    <li>8! = 40,320 x 330 = 13,305,600 octatonics</li>
+                    <li>9! = 362,880 x 165 = 59,875,200 nonatonics</li>
+                    <li>10! = 3,628,800 x 55 = 199,584,000 decatonics</li>
+                    <li>11! = 39,916,800 x 11 = 439,084,800 hendecatonics</li>
+                    <li>12! = 479,001,600 x 1 = 479,001,600 tone-rows</li>
+                </ul>
+                <p class="modal-text">Thus the grand sum of all possible unique harmonic combinations and permutations is: <strong>1,193,556,233</strong>. The formulas above may be expressed as follows.</p>
 
-                <p>There are 2,048 possible combinations (n) for each of the 12 potential tonic notes.</p>
+                <img src="images/permutationFormula.png" alt="Permutation Formula" width="348" height="130">
+            </section>
 
-                <p>In this system, the tonic [0] is fixed and required in every combination—thus we use the binomial coefficient “11 choose n for n = 1 to 11” to calculate the following.</p>
-            </div>
-        </div>
-    </div>
-</div>
+            <section>
+                <h2>The Numbers</h2>
+                <p class="modal-text">This is a duodecimal or base-12 system that uses the following sequence of 12 unique numbers to identify the notes or pitches in a given combination: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11]</p>
+                <p class="modal-text">Any musical pitch may be used for the fixed tonic [0]; and thus every note that follows will be heard relative to the tonic, producing the following intervals.</p>
+                <ul>
+                    <li>[0] = “tonic” or “unison”</li>
+                    <li>[0, 1] = “minor 2nd”</li>
+                    <li>[0, 2] = “major 2nd”</li>
+                    <li>[0, 3] = “minor 3rd”</li>
+                    <li>[0, 4] = “major 3rd”</li>
+                    <li>[0, 5] = “perfect 4th”</li>
+                    <li>[0, 6] = “tritone”</li>
+                    <li>[0, 7] = “perfect 5th”</li>
+                    <li>[0, 8] = “minor 6th”</li>
+                    <li>[0, 9] = “major 6th”</li>
+                    <li>[0, 10] = “minor 7th”</li>  
+                    <li>[0, 11] = “major 7th”</li>
+                </ul>
+                </section>
+                <section>
+                <h2>Cycle Order</h2>
+                <p class="modal-text">This system uses two simple formulas to calculate ascending and descending cycles: (<em>n</em> * 7) % 12 for <em>n</em> = 0 to 11 produces the ascending cycle [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5], while (<em>n</em> * 5) % 12 for <em>n</em> = 0 to 11 produces the descending cycle [0, 5, 10, 3, 8, 1, 6, 11, 4, 9, 2, 7].</p>
+
+                <h3>Ascending Cycle</h3>
+                <p class="modal-text">(<em>n</em> * 7) % 12 (for <em>n</em> = 0 to 11) = [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5]</p>
+                <ol>
+                    <li>(0 * 7) % 12 = 0</li>
+                    <li>(1 * 7) % 12 = 7</li>
+                    <li>(2 * 7) % 12 = 2</li>
+                    <li>(3 * 7) % 12 = 9</li>
+                    <li>(4 * 7) % 12 = 4</li>
+                    <li>(5 * 7) % 12 = 11</li>
+                    <li>(6 * 7) % 12 = 6</li>
+                    <li>(7 * 7) % 12 = 1</li>
+                    <li>(8 * 7) % 12 = 8</li>
+                    <li>(9 * 7) % 12 = 3</li>
+                    <li>(10 * 7) % 12 = 10</li>
+                    <li>(11 * 7) % 12 = 5</li>
+                </ol>
+
+                <h3>Descending Cycle</h3>
+                <p class="modal-text">(<em>n</em> * 5) % 12 (for <em>n</em> = 0 to 11) = [0, 5, 10, 3, 8, 1, 6, 11, 4, 9, 2, 7]</p>
+                <ol>
+                    <li>(0 * 5) % 12 = 0</li>
+                    <li>(1 * 5) % 12 = 5</li>
+                    <li>(2 * 5) % 12 = 10</li>
+                    <li>(3 * 5) % 12 = 3</li>
+                    <li>(4 * 5) % 12 = 8</li>
+                    <li>(5 * 5) % 12 = 1</li>
+                    <li>(6 * 5) % 12 = 6</li>
+                    <li>(7 * 5) % 12 = 11</li>
+                    <li>(8 * 5) % 12 = 4</li>
+                    <li>(9 * 5) % 12 = 8</li>
+                    <li>(10 * 5) % 12 = 2</li>
+                    <li>(11 * 5) % 12 = 7</li>
+                </ol>
+
+                <p class="modal-text">The cycle order is bi-directional, so ascending and descending cycles may be combined: where the tonic [0] is located in the middle of the sequence, with the tritone [6] at each end.</p>
+
+                <p class="modal-text">[6, 1, 8, 3, 10, 5, 0, 7, 2, 9, 4, 11, 6]</p>
+
+                <p class="modal-text">The tritone interval [6] appears twice to preserve left-right symmetry, but is only counted once, so the cycle order remains entirely within base-12.</p>
+            </section>
+    
+            <!-- Additional sections can be added here -->
+        </div> <!-- modal content -->
+    </div> <!-- modal header -->
+</div> <!-- modal -->
 <!--  end modal tabs for ABOUT menu  -->
 
 
