@@ -63,7 +63,7 @@ ul {
     margin-left: 36px;
 }
 ul li {
-    text-indent: 12px; /* Adjust the value as needed */
+    text-indent: 8px; /* space between marker & text */
 }
 
 ol {
@@ -74,9 +74,10 @@ ol {
 }
 
 ol li {
-    text-indent: 12px; /* Adjust the value as needed */
+    text-indent: 8px; /* space between marker & text  */
 }
 li {
+    color: black;
     font-weight: normal;
     text-align: left;
     line-height: 1.2;
@@ -86,6 +87,12 @@ li {
 li:first-child {
     margin-top: 8px;
   }
+
+li::marker {
+    color: darkgrey;
+    font-size: 14px;
+
+}
 
 /* classes */
 .title {
@@ -199,11 +206,38 @@ display: inline;
         color: darkslategrey;
     }
 
-    
+    #modal-table{
+        table-layout: auto;
+        background-color: white;
+        /* width: 90%; */
+        border-collapse: separate;
+        border-spacing: 4px;
+        /* border-collapse: 1px solid  #cccccc;
+         */
+        margin-right: auto;
+        margin-left: 24px;
+        td {
+            border: 1px solid #cccccc;
+            padding: 2px;
+            width: 60px;
+            color: black;
+            font-size: 18px;
+        }
+        .numbering {
+            font-size: 14px;
+            color: darkgrey;
+            width: 36px;
+        }
+        .modal-thead {
+            font-size: 18px;
+            color: darkgrey;
+            padding: 2px;
+        }
+    }
 
 /* IDs */
 #email-modal {
-    color: darkslategrey !important;
+    color: darkslategrey;
 }
 #email-footer, #totalCombinations, #totalPermutations{
     font-size: 24px;

@@ -1398,7 +1398,7 @@ function generateEmailLink(user, domain) {
     return obfuscatedEmail;
 }
 emailFooter.innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "'>Email for more information</a>";
-emailModal.innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "'>contact the author</a>";
+emailModal.innerHTML = "<a class='modal-link' href='mailto:" + generateEmailLink(user, domain) + "'>contact the author</a>";
 
 
 // TODO  // this is a mess of style.display and classList.replace

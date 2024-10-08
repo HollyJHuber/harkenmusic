@@ -296,8 +296,8 @@
 
                 <h3>Reflection Order = Cycle Order</h3>
 
-                <table>
-                    <thead>
+                <table id="modal-table">
+                    <thead class="modal-thead">
                         <tr>
                             <th>No.</th>
                             <th>Axis</th>
@@ -307,73 +307,73 @@
                     </thead>
                     <tbody>
                         <tr>
-                            <td>1</td>
+                            <td class="numbering">1</td>
                             <td>0</td>
                             <td>0°</td>
                             <td>0</td>
                         </tr>
                         <tr>
-                            <td>2</td>
+                            <td class="numbering">2</td>
                             <td>3.5</td>
                             <td>105°</td>
                             <td>7</td>
                         </tr>
                         <tr>
-                            <td>3</td>
+                            <td class="numbering">3</td>
                             <td>1</td>
                             <td>30°</td>
                             <td>2</td>
                         </tr>
                         <tr>
-                            <td>4</td>
+                            <td class="numbering">4</td>
                             <td>4.5</td>
                             <td>135°</td>
                             <td>9</td>
                         </tr>
                         <tr>
-                            <td>5</td>
+                            <td class="numbering">5</td>
                             <td>2</td>
                             <td>60°</td>
                             <td>4</td>
                         </tr>
                         <tr>
-                            <td>6</td>
+                            <td class="numbering">6</td>
                             <td>5.5</td>
                             <td>165°</td>
                             <td>11</td>
                         </tr>
                         <tr>
-                            <td>7</td>
+                            <td class="numbering">7</td>
                             <td>3</td>
                             <td>90°</td>
                             <td>6</td>
                         </tr>
                         <tr>
-                            <td>8</td>
+                            <td class="numbering">8</td>
                             <td>0.5</td>
                             <td>15°</td>
                             <td>1</td>
                         </tr>
                         <tr>
-                            <td>9</td>
+                            <td class="numbering">9</td>
                             <td>4</td>
                             <td>120°</td>
                             <td>8</td>
                         </tr>
                         <tr>
-                            <td>10</td>
+                            <td class="numbering">10</td>
                             <td>1.5</td>
                             <td>45°</td>
                             <td>3</td>
                         </tr>
                         <tr>
-                            <td>11</td>
+                            <td class="numbering">11</td>
                             <td>5</td>
                             <td>150°</td>
                             <td>10</td>
                         </tr>
                         <tr>
-                            <td>12</td>
+                            <td class="numbering">12</td>
                             <td>2.5</td>
                             <td>75°</td>
                             <td>5</td>
@@ -383,7 +383,7 @@
 
                 <h3>Rotations (12 Transpositions)</h3>
 
-                <p class="modal-text">Every combination and permutation in 12-tone music can be transformed (transposed) mathematically using rotations. For example, using the 4-number combination [0, 4, 7, 10], we calculate the following transpositions using the formula: (<em>n</em> + <em>t</em>) % 12.</p>
+                <p class="modal-text">Every combination and permutation in 12-tone music can be transformed (transposed) mathematically using rotations. For example, using the 4-number combination [0, 4, 7, 10], we calculate the following transpositions using the formula: (<em>n</em> + <em>t</em> ) % 12.</p>
 
                 <ol>
                     <li>[0, 4, 7, 10]</li>
@@ -404,9 +404,9 @@
 
                 <p class="modal-text">Here’s how it works.</p>
 
-                <p class="modal-text">(<em>n</em> + <em>t</em>) % 12, where n = note number and t = transposition; the modulo (% 12) takes the remainder to maintain the 12-tone system.</p>
+                <p class="modal-text">(<em>n</em> + <em>t</em> ) % 12, where n = note number and t = transposition; the modulo (% 12) takes the remainder to maintain the 12-tone system.</p>
 
-                <p class="modal-text">To rotate any note number or combination, simply add any transposition number; and use modulo to limit range to 12. For example: (n + t) % 12 = 0 + 7 % 12 = 7. Thus the combination [0, 4, 7, 10] transposes as shown above in ascending cycle order.</p>
+                <p class="modal-text">To rotate any note number or combination, simply add any transposition number; and use modulo to limit range to 12. For example: (<em>n</em> + <em>t</em> ) % 12 = 0 + 7 % 12 = 7. Thus the combination [0, 4, 7, 10] transposes as shown above in ascending cycle order.</p>
             </section>
             <section>
                 <h2>Demonstration (Proof of Concept)</h2>
@@ -429,7 +429,7 @@
 
                 <p class="modal-text">See also: <a class = "modal-link" href="https://mitchkahle.substack.com/p/ai-math-and-music"><em>“Harken Music: A New Mathematical Framework for 12-Tone Harmony”, a review by ChatGPT 4o.</em></a></p>
 
-                <p class="modal-text">Constructive comments, suggestions, and ideas are always welcome <a class = "modal-link" href = "https://mitchkahle.substack.com">here</a>. Persons interested in collaborating, please <span id="email-modal"></span>.</p>
+                <p class="modal-text">Constructive comments, suggestions, and ideas are always welcome <a class = "modal-link" href = "https://mitchkahle.substack.com">here</a>. Persons interested in collaborating, please <span id="email-modal" class="modal-link"></span>.</p>
             </section>
             <section>
                 <h2>License</h2>
