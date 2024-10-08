@@ -163,6 +163,7 @@ display: block;
 display: inline;
 }
 
+
 /* MODAL CLASSES */
     /* Modal box */
     .modal-content {
@@ -194,10 +195,17 @@ display: inline;
         margin: 3px;
     }
 
+    .modal-link {
+        color: darkslategrey;
+    }
+
     
 
 /* IDs */
-#email, #totalCombinations, #totalPermutations{
+#email-modal {
+    color: darkslategrey !important;
+}
+#email-footer, #totalCombinations, #totalPermutations{
     font-size: 24px;
     color: aliceblue;
     margin: 12px;

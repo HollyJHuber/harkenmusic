@@ -1381,11 +1381,12 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
  /**********  MISC FUNCTIONS  ***********/
 /**
- * function to generate obfuscated email link in footer
+ * function to generate obfuscated email link in footer & modal
  */
-var user = "mitchkahle"; // Replace with your email username
-var domain = "gmail.com"; // Replace with your email domain
-var emailElement = document.getElementById("email");
+const user = "mitchkahle"; // Replace with your email username
+const domain = "gmail.com"; // Replace with your email domain
+const emailFooter = document.getElementById("email-footer");
+const emailModal = document.getElementById("email-modal");
 
 function generateEmailLink(user, domain) {
     const email = user + "@" + domain;
@@ -1396,8 +1397,9 @@ function generateEmailLink(user, domain) {
     obfuscatedEmail = obfuscatedEmail + "?subject=Harken%20Music";
     return obfuscatedEmail;
 }
+emailFooter.innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "'>Email for more information</a>";
+emailModal.innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "'>contact the author</a>";
 
-document.querySelector("#email").innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "'>Email for more information</a>"
 
 // TODO  // this is a mess of style.display and classList.replace
 /**
