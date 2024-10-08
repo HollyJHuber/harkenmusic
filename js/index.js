@@ -557,34 +557,39 @@ function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo
 async function playAllSequences(noteSequencesArray) {
     stopMIDI = false; // Reset stop flag
     const numberOfNotes = noteSequencesArray[0].notes.length;
+    let buttonID = "";
 
     switch (noteSequencesArray[0].rowID) {
         case "1-commonPermutations":
             document.querySelector("#playAllCommon").onclick = function() {
             stopPlayingMIDI("playAllCommon")};
             document.querySelector("#playAllCommon").innerHTML = "STOP";
+            buttonID = "playAllCommon";
             break;
         case "1-reflections":
             document.querySelector("#playAllReflections").onclick = function() {
             stopPlayingMIDI("playAllReflections")};
             document.querySelector("#playAllReflections").innerHTML = "STOP";
+            buttonID = "playAllReflections";
             break;
 
         case "1-rotations":
             document.querySelector("#playAllRotations").onclick = function() {
             stopPlayingMIDI("playAllRotations")};
             document.querySelector("#playAllRotations").innerHTML = "STOP";
+            buttonID = "playAllRotations";
             break;
         case "1-allPermutations":
             if (numberOfNotes < 4) {
                 document.querySelector("#playAllCommon").onclick = function() {
                     stopPlayingMIDI("playAllCommon")};
                     document.querySelector("#playAllCommon").innerHTML = "STOP";
+                    buttonID = "playAllCommon";
             } else {
                 document.querySelector("#playAllPermutations").onclick =    function(){ stopPlayingMIDI("playAllPermutations")};
                 document.querySelector("#playAllPermutations").innerHTML = "STOP";
+                buttonID = "playAllPermutations";
             }
-
             break;
     }
 
@@ -595,11 +600,13 @@ async function playAllSequences(noteSequencesArray) {
         // speed up duration to 1/16 note
         if (stopMIDI) {
             console.log(`stop play all sequences`);
-            // TODO reset button
+            // TODO reset button // ??
             break;
         }
         await playMIDISequence(sequence.rowID, sequence.notes, "", 0.375); 
     }
+    
+    stopPlayingMIDI(buttonID);
     console.log("All sequences have been played");
     stopMIDI = false; // reset flag
     isMIDIplaying = false;
@@ -1374,11 +1381,12 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
  /**********  MISC FUNCTIONS  ***********/
 /**
- * function to generate obfuscated email link in footer
+ * function to generate obfuscated email link in footer & modal
  */
-var user = "mitchkahle"; // Replace with your email username
-var domain = "gmail.com"; // Replace with your email domain
-var emailElement = document.getElementById("email");
+const user = "mitchkahle"; // Replace with your email username
+const domain = "gmail.com"; // Replace with your email domain
+const emailFooter = document.getElementById("email-footer");
+const emailModal = document.getElementById("email-modal");
 
 function generateEmailLink(user, domain) {
     const email = user + "@" + domain;
@@ -1389,8 +1397,9 @@ function generateEmailLink(user, domain) {
     obfuscatedEmail = obfuscatedEmail + "?subject=Harken%20Music";
     return obfuscatedEmail;
 }
+emailFooter.innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "'>Email for more information</a>";
+emailModal.innerHTML = "<a class='modal-link' href='mailto:" + generateEmailLink(user, domain) + "'>contact the author</a>";
 
-document.querySelector("#email").innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "'>Email for more information</a>"
 
 // TODO  // this is a mess of style.display and classList.replace
 /**
@@ -1452,7 +1461,37 @@ function scrollToBottom() {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
 
-// Function to display the modal
-function displayModal() {
-    document.getElementById('Info').style.display="block";
-}
+// MODAL
+
+document.getElementById('openModalButton').addEventListener('click', function(event) {
+    event.stopPropagation();  // Prevent the click from triggering outside click logic
+    openModal();
+  });
+
+  function openModal() {
+    // Display the modal and prevent background scroll
+    document.getElementById('AboutModal').style.display = 'block';
+    document.body.classList.add('modal-open');
+
+    // Close the modal if user clicks outside the modal content
+    window.addEventListener('click', outsideClickHandler);
+  }
+
+  function closeModal() {
+    // Hide the modal and restore background scroll
+    document.getElementById('AboutModal').style.display = 'none';
+    document.body.classList.remove('modal-open');
+
+    // Remove the event listener to avoid it running after the modal is closed
+    window.removeEventListener('click', outsideClickHandler);
+  }
+
+  function outsideClickHandler(event) {
+    const modal = document.getElementById('AboutModal');
+    const modalContent = document.querySelector('.w3-modal-content');
+
+    // Check if the click was outside the modal content
+    if (!modalContent.contains(event.target) && modal.style.display === 'block') {
+      closeModal();
+    }
+  }

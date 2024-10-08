@@ -590,7 +590,7 @@ async function playAllSequences(noteSequencesArray) {
 
     console.log(noteSequencesArray);
 
-    for (let i = 0; i < numberOfNotes; i++) {
+    for (let i = 0; i < noteSequencesArray.length; i++) {
         const sequence = noteSequencesArray[i];
         // speed up duration to 1/16 note
         if (stopMIDI) {
@@ -1450,4 +1450,9 @@ function scrollToTop() {
 // Function to scroll to the bottom of the page
 function scrollToBottom() {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+}
+
+// Function to display the modal
+function displayModal() {
+    document.getElementById('Info').style.display="block";
 }

@@ -1,62 +1,159 @@
 <!DOCTYPE html>
-<html>
-<head>
-  <link rel="stylesheet" href="https://www.w3schools.com/w3css/4/w3.css">
-  <style>
-    /* Modal box content */
-    .modal-content {
-      max-height: 400px; /* Set a max height for the modal content */
-      overflow-y: auto; /* Scroll only within the modal content */
-    }
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HARKEN MUSIC</title>
+        <!-- styles --> <!--  order is important, last style sheet read in will take precedence  -->
+        <link rel="stylesheet" href="css/w3.css">
+        <link rel="stylesheet" href="css/harken.css">
+        <!-- lodash-->
+        <script src="https://cdn.jsdelivr.net/npm/lodash@4.17.21/lodash.min.js"></script>
+        <!-- polyfill -->
+        <script src="./inc/shim/Base64.js" type="text/javascript"></script>
+        <script src="./inc/shim/Base64binary.js" type="text/javascript"></script>
+        <script src="./inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+        <!-- midi.js package -->
+        <script src="./js/midi/audioDetect.js" type="text/javascript"></script>
+        <script src="./js/midi/gm.js" type="text/javascript"></script>
+        <script src="./js/midi/loader.js" type="text/javascript"></script>
+        <script src="./js/midi/plugin.audiotag.js" type="text/javascript"></script>
+        <script src="./js/midi/plugin.webaudio.js" type="text/javascript"></script>
+        <script src="./js/midi/plugin.webmidi.js" type="text/javascript"></script>
+        <!-- utils -->
+        <script src="./js/util/dom_request_xhr.js" type="text/javascript"></script>
+        <script src="./js/util/dom_request_script.js" type="text/javascript"></script>
+        <!-- Copyright 2024 Mitchell Kahle and Holly J. Huber. -->
+        <!-- Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the “Software”), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions: -->
+        <!-- The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software. -->
+        <!-- THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE. -->
+    </head>
+    <body>
+        <div id="pageTitle"><strong>HARKEN MUSIC</strong></div>
+        <div id="title" class="hidden">Choose Combination</div>
+        <div><select id="tonicSelect" class="hidden" name="tonicSelect" value= "0" onchange = "updateHTML(this.value, 1)"> 
+            <option value = "0">0</option>
+            <option value = "00">D</option>
+            <option value = "1#">D&#x266f</option>
+            <option value = "1b">E&#x266d</option>
+            <option value = "2">E</option>
+            <option value = "3">F</option>
+            <option value = "4#">F&#x266f</option>
+            <option value = "4b">G&#x266d</option>
+            <option value = "5">G</option>
+            <option value = "6#">G&#x266f</option>
+            <option value = "6b">A&#x266d</option>
+            <option value = "7">A</option>
+            <option value = "8#">A&#x266f</option>
+            <option value = "8b">B&#x266d</option>
+            <option value = "9">B</option>
+            <option value = "10">C</option>
+            <option value = "11#">C&#x266f</option>
+            <option value = "11b">D&#x266d</option>
+        </select>
+        <button id="startButton" onclick="playCycle(audioContext)"><strong>START</strong></button>
+        <select id="notes" class="hidden" name="notes" value= "1" onchange = "updateHTML(0, this.value)"> 
+            <option value = "1">1 (Cycle)</option>
+            <option value = "2">2 (Intervals)</option>
+            <option value = "3">3 (Triads)</option>
+            <option value = "4">4 (Tetrachords)</option>
+            <option value = "5">5 (Pentatonics)</option>
+            <option value = "6">6 (Hexatonics)</option>
+            <option value = "7">7 (Heptatonics)</option>
+            <option value = "8">8 (Octatonics)</option>
+            <option value = "9">9 (Nonatonics)</option>
+            <option value = "10">10 (Decatonics)</option>
+            <option value = "11">11 (Hendecactonics)</option>
+            <option value = "12">12 (Chromatic)</option>
+            </select>
+        </div>
+        <div><button class="grey-button hidden" id="goBack" onclick="goBack()">GO BACK</button>
+            <button class="grey-button hidden" id="startOver" onclick="startOver()">START OVER</button>
+            <button class="grey-button hidden" id="goToBottom" onclick="scrollToBottom()">GO TO END</button>
+            <button class="grey-button hidden" id="stop" onclick="stopPlayingMIDI()">STOP</button>
 
-    /* Lock the background when the modal is open */
-    body.modal-open {
-      overflow: hidden;
-    }
-  </style>
-</head>
-<body>
+         </div>
 
-  <!-- The Button to Open Modal -->
-  <button onclick="openModal()" class="w3-button w3-black">Open Modal</button>
+             <div id="totalCombinations"></div>
+            <!-- heading, number of total combinations dynamically inserted here -->
 
-  <!-- The Modal -->
-  <div id="myModal" class="w3-modal">
-    <div class="w3-modal-content modal-content">
-      <header class="w3-container w3-teal">
-        <span onclick="closeModal()"
-        class="w3-button w3-display-topright">&times;</span>
-        <h2>Modal Header</h2>
-      </header>
-      <div class="w3-container">
-        <p>This is your modal content.</p>
-        <p>You can add as much text as you want here, and a scrollbar will appear within the modal if the content overflows.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse elementum nisl et quam facilisis, in eleifend arcu pretium. Nullam ullamcorper purus neque, at hendrerit dolor sodales ac. Cras viverra sit amet lectus nec fermentum. Donec efficitur aliquet gravida. Vivamus et turpis nunc. Cras ut mauris nibh. Curabitur quis consectetur eros. Nulla facilisi. Cras non elit arcu. Fusce consequat gravida magna, ut dapibus urna accumsan eget. Vivamus sit amet fringilla libero, eu cursus nunc.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse elementum nisl et quam facilisis, in eleifend arcu pretium. Nullam ullamcorper purus neque, at hendrerit dolor sodales ac. Cras viverra sit amet lectus nec fermentum. Donec efficitur aliquet gravida. Vivamus et turpis nunc. Cras ut mauris nibh. Curabitur quis consectetur eros. Nulla facilisi. Cras non elit arcu. Fusce consequat gravida magna, ut dapibus urna accumsan eget. Vivamus sit amet fringilla libero, eu cursus nunc.</p>
-        <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse elementum nisl et quam facilisis, in eleifend arcu pretium. Nullam ullamcorper purus neque, at hendrerit dolor sodales ac. Cras viverra sit amet lectus nec fermentum. Donec efficitur aliquet gravida. Vivamus et turpis nunc. Cras ut mauris nibh. Curabitur quis consectetur eros. Nulla facilisi. Cras non elit arcu. Fusce consequat gravida magna, ut dapibus urna accumsan eget. Vivamus sit amet fringilla libero, eu cursus nunc.</p>
+            <table id="combinations"></table>
+             <!-- combinations table dynamically inserted here -->
+
+             <table id="permutationsCombo"></table>
+             <!-- single combination for permutations dynamically inserted here -->
         
-        <p>...More long text...</p>
-      </div>
-      <footer class="w3-container w3-teal">
-        <p>Modal Footer</p>
-      </footer>
+        <!-- hiding content generated later -->
+        <div id="generatedContent" class = "hidden">
+
+             <div><button class="grey-button" id="playAllCommon" onclick="playAllSequences(allCommonPermutations)">PLAY ALL</button></div>
+             <div id="commonPermutationsTitle"></div>   
+             <table id="commonPermutations"></table>
+             <!-- common permutations inserted here -->
+
+             <div><button class="grey-button" id="playAllReflections" onclick="playAllSequences(allReflections)">PLAY ALL</button><div id="reflectionsTitle"></div></div>
+             <table id="reflections"></table>
+            <!-- reflections inserted here -->
+
+            <div><button class="grey-button" id="playAllRotations" onclick = "playAllSequences(allRotations)">PLAY ALL</button> <div id="rotationsTitle"></div></div>
+            <table id="rotations"></table>
+           <!-- rotations inserted here -->
+
+           <div class = ><button class="grey-button" id="playAllPermutations" onclick = "playAllSequences(allAllPermutations)">PLAY ALL</button> <div id="allPermutationsTitle"></div></div>
+            <table id="allPermutations"></table>
+            <!-- ALL permutations inserted here (if applicable)-->
+        </div>
+        <!-- end of generatedContent div -->
+       <div> <button class="grey-button hidden" id="goToTop" onclick="scrollToTop()">GO TO TOP</button></div>
+            <div class="divider"></div>
+            <div><button class="grey-button" id="displayModal"onclick="displayModal()"><strong>ABOUT</strong></button></div>
+            
+            <footer> <span id="email"></span>
+            <p class = "footerLine">Copyright 2024, Mitchell Kahle and Holly J. Huber, MIT License</p></footer>
+
+
+<!--  start modal tabs for ABOUT  -->
+<div id="Info" class="w3-modal">
+    <div class="w3-modal-content w3-grey w3-card-4 w3-animate-zoom">
+        <header class="w3-container">
+            <span onclick="document.getElementById('Info').style.display='none'" class="w3-closebtn w3-padding-top modal-close"> &times;</span>
+            <h2>HARKEN MUSIC</h2>
+        </header>
+        <div  class="w3-container w3-padding-bottom discover" style="display: block;">
+                <p>Harken Music is a new first-ever mathmatical solution for calculating all 1,193,556,233 harmonic combinations and permutations possible in 12-tone music.</p>
+
+                <p>Please read the step-by-step description of the math below, and then use the open-source HTML/Javascript demo* at harkenmusic.com to see and hear everything yourself.</p>
+
+                <p>*Note: a desktop or laptop computer and current web browser (Chrome, Safari, etc.) are required for using the demo; however there are no downloads, sign-up, or subscription requirements.</p>
+
+                <p>Using the demo, you can choose any combination size (from 1 to 12 notes) from the pulldown menu; then select a combination from the numbered list to see and hear all permutations, reflections (inversions), and rotations (transpositions).</p>
+
+                <h2>Combinations</h2>
+
+                <p>There are 2,048 possible combinations (n) for each of the 12 potential tonic notes.</p>
+
+                <p>In this system, the tonic [0] is fixed and required in every combination—thus we use the binomial coefficient “11 choose n for n = 1 to 11” to calculate the following.</p>
+            </div>
+        </div>
     </div>
-  </div>
+</div>
+<!--  end modal tabs for ABOUT menu  -->
 
-  <script>
-    function openModal() {
-      // Display the modal and prevent background scroll
-      document.getElementById('myModal').style.display = 'block';
-      document.body.classList.add('modal-open');
-    }
-
-    function closeModal() {
-      // Hide the modal and restore background scroll
-      document.getElementById('myModal').style.display = 'none';
-      document.body.classList.remove('modal-open');
-    }
-  </script>
-
-</body>
-</html>
-
+        <!-- Javascript goes here so DOM is fully loaded-->
+        <script src="js/index.js"></script>
+        <script>
+        // Load MIDI and soundfont
+        window.onload = function () {
+            MIDI.loadPlugin({
+                soundfontUrl: "./soundfont/",
+		        instrument: "acoustic_grand_piano",
+		        onprogress: function(state, progress) {
+		},
+                onsuccess: function () {
+                    document.getElementById('playButton').onclick = playCycle;
+                }
+            });
+        };
+        </script>
+    </body>
+</html> 

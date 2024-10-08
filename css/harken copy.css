@@ -6,23 +6,18 @@ body  {
     text-align: center;
     font-size: 36px;
 }
-
-h2 {
-    font-size: 24px;
-    font-weight: bold;
+ol li, p, ul li{
     text-align: left;
-    padding: 12px 0px 0px 0px;
-    margin: 0;
-}
-
-h3 {
     font-size: 18px;
-    font-weight: bold;
-    text-align: left;
-    padding: 9px 0px 0px 0px;
-    margin: 0;
 }
 
+h2{
+   font-size: 36px;
+}
+
+h3, div{
+   font-size: 24px;
+}
 table {
     background-color: rgba(255, 255, 255, 1);
     border-collapse: 1px solid  #cccccc;
@@ -54,47 +49,7 @@ label {
 a {
     color: lightgrey;
 }
-
-ul {
-    font-size: 18px;
-    font-weight: bold;
-    text-align: left;
-    list-style-type: disc;
-    margin-left: 36px;
-}
-ul li {
-    text-indent: 8px; /* space between marker & text */
-}
-
-ol {
-    font-size: 18px;
-    font-weight: normal;
-    text-align: left;
-    margin-left: 48px;
-}
-
-ol li {
-    text-indent: 8px; /* space between marker & text  */
-}
-li {
-    color: black;
-    font-weight: normal;
-    text-align: left;
-    line-height: 1.2;
-    margin-bottom: 2px;
-}
-
-li:first-child {
-    margin-top: 8px;
-  }
-
-li::marker {
-    color: darkgrey;
-    font-size: 14px;
-
-}
-
-/* classes */
+/* class */
 .title {
     font-size: 48px;
     margin-bottom: 20px;
@@ -123,6 +78,7 @@ li::marker {
     font-size: 16px;
     color: aliceblue;
     margin: 12px;
+    text-align: center;
 }
 .grey-button {
 background-color: #999999;
@@ -170,76 +126,13 @@ display: block;
 display: inline;
 }
 
-
-/* MODAL CLASSES */
-    /* Modal box */
-    .modal-content {
-        max-height: 80vh; /* Set max height to 80% of the viewport height */
-        overflow-y: auto; /* Scroll only within the modal content */
-      }
-  
-      /* Lock the background when the modal is open */
-      body.modal-open {
-        overflow: hidden;
-      }
-      * {
-        margin: 0;
-        padding: 0;
-        text-indent: 0;
-    }
-
-    /* modal text - the bulk/body of the modal content*/
-    .modal-text {
-        text-align: left;
-        font-size: 18px;
-        line-height: 1.5;
-        padding: 9px 0px 0px 0px;
-    }
-
-    .modal-grey-bkgrd {
-        background-color: aliceblue;
-        padding: 9px;
-        margin: 3px;
-    }
-
-    .modal-link {
-        color: darkslategrey;
-    }
-
-    #modal-table{
-        table-layout: auto;
-        background-color: white;
-        /* width: 90%; */
-        border-collapse: separate;
-        border-spacing: 4px;
-        /* border-collapse: 1px solid  #cccccc;
-         */
-        margin-right: auto;
-        margin-left: 24px;
-        td {
-            border: 1px solid #cccccc;
-            padding: 2px;
-            width: 60px;
-            color: black;
-            font-size: 18px;
-        }
-        .numbering {
-            font-size: 14px;
-            color: darkgrey;
-            width: 36px;
-        }
-        .modal-thead {
-            font-size: 18px;
-            color: darkgrey;
-            padding: 2px;
-        }
-    }
+.modal-close {
+    font-size: 48px;
+    display: inline;
+}
 
 /* IDs */
-#email-modal {
-    color: darkslategrey;
-}
-#email-footer, #totalCombinations, #totalPermutations{
+#email, #totalCombinations, #totalPermutations{
     font-size: 24px;
     color: aliceblue;
     margin: 12px;
