@@ -739,7 +739,7 @@ function isSymmetrical(row) {
  * @returns ?? array of arrays of objects; each inner array has an additional object to describe the inner array
  */
 function generateCombos(t, k) {
-
+    const numNotes = parseInt(k);
     let tonicType = "";
     const tonicString = String(t);
     if (tonicString === "0") {
@@ -868,7 +868,12 @@ function generateCombos(t, k) {
         }
 
         if (isSymmetrical(barcode)) {
-            info.symmetrical = true;
+            if (numNotes === 2){
+                // tritone should be last
+                info.symmetrical = false;
+            } else {
+                info.symmetrical = true;
+            }
             info.quality = "mixed";
         } else {
             if (isMajor > 0){
@@ -943,7 +948,12 @@ function generateCombos(t, k) {
         sourceCombinations.push(collection);
     });
     // sorting arrays based on quality using a custom sort order
-    const customComboOrder = ["mixed", "major", "minor", "major-minor", "minor-major"];
+    let customComboOrder = ["mixed", "major", "minor", "major-minor", "minor-major"];
+
+    if (numNotes === 2) {
+        // slightly different sort order for intervals
+        customComboOrder = ["major", "minor", "mixed"];
+    }
 
     // function to map the custom sort order index
     const getComboOrder = (ord) => {
@@ -1143,7 +1153,6 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
 
     const numberOfNotes = document.querySelector("#notes").value;
     // TODO // isn't there a better way to determine this value??
-console.log(`number of Notes: ${numberOfNotes}`);
      if (numberOfNotes < 4) {
         // if intervals or triads, change the PLAY ALL buttons for Permutations
         document.querySelector("#playAllCommon").onclick = function() {
@@ -1226,8 +1235,6 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
     const numberOfNotes = document.querySelector("#notes").value;
     // TODO // isn't there a better way to determine this value??
-    console.log(`number of Notes: ${numberOfNotes}`);
-
 
      if (numberOfNotes < 4) {
         // all permutations, no need for common but put the all where common would be!

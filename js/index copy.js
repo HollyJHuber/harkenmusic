@@ -634,8 +634,6 @@ function updateHTML () {
 
 }
 
-// TODO problem is the createPermutations buttons on the regenerated combinations don't work!
-// TODO // GO BACK button is not generating play cycle button and table cell colors
 /**
  * called by GO BACK button to display the combinations again
  */
@@ -654,16 +652,19 @@ function goBack() {
     } else {
         document.querySelector("#combinations").innerHTML = generateCombos(tonic, numNotes);
     }
-    document.getElementById('notes').style.display = 'inline';
+    // display elements
+    document.getElementById('notes').classList.replace("hidden", "showInline");
     document.getElementById('totalCombinations').style.display = 'block';
     document.getElementById('combinations').style.display = 'inline-block';
-    document.getElementById('startOver').style.display = 'none';
-    document.getElementById('goBack').style.display = 'none';
-    document.getElementById('goToBottom').style.display = 'none';
-    document.getElementById('goToTop').style.display = 'none';
+
+    // hide elements
+    document.getElementById('goBack').classList.replace("showInline", "hidden");
+    document.getElementById('startOver').classList.replace("showInline", "hidden");
+    document.getElementById('goToBottom').classList.replace("showInline", "hidden");
+    document.getElementById('goToTop').classList.replace("showInline", "hidden");
+
     document.getElementById('permutationsCombo').style.display = 'none';
     document.getElementById('generatedContent').classList.replace("showInline", "hidden");
-
 }
 
  /**
@@ -1008,6 +1009,8 @@ function generateCombos(t, k) {
    allCombinations.unshift(`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead><tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleDisplay.join("")}<td class = "interval">cycle</td></tr>`);
 
     document.querySelector("#totalCombinations").innerHTML = `${count} ${comboLabels[k]}`;
+    document.getElementById('totalCombinations').style.display = 'block';
+
 
     return( _.join(allCombinations, "</tr><tr>"));
   }
@@ -1234,8 +1237,6 @@ function createPermutationsTables(comboCount, selectedComboArray) {
         document.querySelector("#allPermutationsTitle").style.display = 'none';
         document.querySelector("#allPermutations").style.display = 'none';
 
-        // TODO // fix the play all button id="playAllCommon" 
-        // TODO // remove the play all button for id="playAllPermutations"
      } else {
        // common & all permutations
         if (combinationOfNotesOnly.length > 7) {
@@ -1256,18 +1257,17 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
      }
 
-     // TODO fix this mess of style.display versus classList hidden
-
-     document.querySelector("#reflectionsTitle").innerHTML = "Reflections";
+      document.querySelector("#reflectionsTitle").innerHTML = "Reflections";
       document.querySelector("#reflections").innerHTML = reflectOverMultipleAxes(combinationOfNotesOnly);
 
       document.querySelector("#rotationsTitle").innerHTML = "Rotations";
       document.querySelector("#rotations").innerHTML = rotateCombination(combinationOfNotesOnly);
 
-      document.getElementById('startOver').style.display = 'inline';
-      document.getElementById('goBack').style.display = 'inline';
-      document.getElementById('goToTop').style.display = 'inline';
-      document.getElementById('goToBottom').style.display = 'inline';
+      // display HTML elements
+      document.getElementById('goBack').classList.replace("hidden", "showInline");
+      document.getElementById('startOver').classList.replace("hidden", "showInline");
+      document.getElementById('goToBottom').classList.replace("hidden", "showInline");
+      document.getElementById('goToTop').classList.replace("hidden", "showInline");
       
       document.getElementById('permutationsCombo').style.display = 'inline-block';
       document.getElementById('commonPermutationsTitle').style.display = 'block';
@@ -1279,11 +1279,11 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     //   document.getElementById('allPermutationsTitle').style.display = 'block';
     //   document.getElementById('allPermutations').style.display = 'inline-block';
 
-        // hide combinations data by id
-        document.getElementById('tonicSelect').style.display = 'none';
-        document.getElementById('notes').style.display = 'none';
-        document.getElementById('totalCombinations').style.display = 'none';
-        document.getElementById('combinations').style.display = 'none';
+    // hide HTML elements
+    // document.getElementById('tonicSelect').style.display = 'none';
+    document.getElementById('notes').classList.replace("showInline", "hidden");
+    document.getElementById('totalCombinations').style.display = 'none';
+    document.getElementById('combinations').style.display = 'none';
  }
 
  /**********  REFLECTION FUNCTIONS  ***********/
@@ -1401,39 +1401,46 @@ emailFooter.innerHTML = "<a href='mailto:" + generateEmailLink(user, domain) + "
 emailModal.innerHTML = "<a class='modal-link' href='mailto:" + generateEmailLink(user, domain) + "'>contact the author</a>";
 
 
-// TODO  // this is a mess of style.display and classList.replace
 /**
  * called by START OVER button to allow a new Notes selection
  * without having to hit the START button to load the MIDI
  *  */
 function startOver() {
-        // used to be refresh page;
-    // location.reload();
 
-    cycleOnly = source.map((obj) => 
-    `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`);
-    allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-<tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
-
+    // reset all variables
+    matrixType = "number";
+    isMIDIplaying = false;
+    stopMIDI = false;
+    allCombinations= [];
     allCommonPermutations = [];
     allPermutations = [];
     allAllPermutations = [];
     allReflections = [];
     allRotations = [];
 
-    document.getElementById('notes').value= "1";
-    document.getElementById('notes').style.display = 'inline';
-    document.getElementById('title').innerHTML = "Choose Combination";
+    cycleOnly = source.map((obj) => 
+    `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${obj.cycle}</td>`);
 
+    // HTML to display
+    document.getElementById('title').innerHTML = "Choose Combination";
+    document.getElementById('notes').value= "1";
+    document.getElementById('notes').classList.replace("hidden", "showInline");
+
+     // updates the allCombinations array
+    updateHTML();
     document.querySelector("#combinations").innerHTML = allCombinations;
     document.getElementById('combinations').style.display = 'inline-block';
+    
 
+    //HTML elements to hide
+    // buttons
+    document.getElementById('goBack').classList.replace("showInline", "hidden");
+    document.getElementById('startOver').classList.replace("showInline", "hidden");
+    document.getElementById('goToBottom').classList.replace("showInline", "hidden");
+    document.getElementById('goToTop').classList.replace("showInline", "hidden");
+
+    document.getElementById('totalCombinations').style.display = 'none';
     document.getElementById('permutationsCombo').style.display = 'none';
-    document.getElementById('goBack').style.display = 'none';
-    document.getElementById('goToBottom').style.display = 'none';
-    document.getElementById('goToTop').style.display = 'none';
-    document.getElementById('startOver').style.display = 'none';
-    document.getElementById('generatedContent').classList.replace("showInline", "hidden");
 
     // reset the play all buttons 
     document.querySelector("#playAllCommon").onclick = function() { playAllSequences(allCommonPermutations) };
@@ -1448,6 +1455,8 @@ function startOver() {
      document.querySelector("#playAllPermutations").onclick = function() { playAllSequences(allAllPermutations) };
      document.querySelector("#playAllPermutations").innerHTML = "PLAY ALL";
 
+     // hide the div containing those buttons
+     document.getElementById('generatedContent').classList.replace("showInline", "hidden");
 }
 
 
@@ -1461,7 +1470,7 @@ function scrollToBottom() {
     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
 }
 
-// MODAL
+// MODAL FUNCTIONS
 
 document.getElementById('openModalButton').addEventListener('click', function(event) {
     event.stopPropagation();  // Prevent the click from triggering outside click logic
