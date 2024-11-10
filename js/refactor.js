@@ -1159,10 +1159,10 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
 
 
     // TODO // this should be moved elsewhere ???
-    document.querySelector("#title").innerHTML = `Selected Combination`;
+    document.querySelector("#title").innerHTML = `Selected Combination #`;
 
     // Common Permutations of # Total
-    document.querySelector("#commonPermutationsTitle").innerHTML = "Permutations";
+    document.querySelector("#commonPermutationsTitle").innerHTML = "Common Permutations";
     // table of common permutations!
     return( _.join(commonPermutations,  "</tr><tr>"));
 }
@@ -1219,14 +1219,14 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     // extract only unique cycle values (no duplicates) & sort by cycle
     const combinationOfNotesOnly = _.sortBy(_.uniqBy(selectedComboArray, "cycle"), "cycle");
     const totalPermutationsCount = calculatePermutations(combinationOfNotesOnly.length);
+    const rowID = comboCount + "-permutationsCombo";
 
-    document.querySelector("#title").innerHTML = `Selected Combination`;
+    document.querySelector("#title").innerHTML = `Selected Combination #${rowID}`;
     document.getElementById('startOver').classList.replace("hidden", "showInline");
     document.getElementById('goBack').classList.replace("hidden", "showInline");
     document.getElementById('goToBottom').classList.replace("hidden", "showInline");
     document.getElementById('goToTop').classList.replace("hidden", "showInline");
     document.getElementById('generatedContent').classList.replace("hidden", "showInline");
-
 
     // select combo to display in #permutationsCombo table and set up buttons
     // change note sequence to cycle order for permutationsCombo table only
@@ -1243,7 +1243,7 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
     // update button and tr tags from allCombinations
      let selectedCombination = allCombinations[comboCount];
-     const rowID = comboCount + "-permutationsCombo";
+
      let newButtonTag = `<button class="grey-button" onclick='playMIDICycle("${rowID}", ${JSON.stringify(notesToPlay)}, "#permutationsCombo")'>`;
      selectedCombination = selectedCombination
         .replace(/<button[^>]*>/, newButtonTag)
