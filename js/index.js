@@ -260,7 +260,7 @@ let cycleOnly = source.map((obj) =>
     );
 
 allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-<tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+<tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "numbering"><button class="play-button" id="playRevButton">&#9664;</button></td></tr>`];
 
 let audioContext;
 
@@ -286,6 +286,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     playCycle(audioContext);
             }
         });
+
+        // duplicate code to Add the event listener for the reverse button click to handle AudioContext and MIDI playback
+        document.getElementById('playRevButton').addEventListener('click', function() {
+            if (!audioContext) {
+                // Create the AudioContext only after the user has clicked the button
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+    
+            if (audioContext.state === 'suspended') {
+                // Resume the AudioContext if it’s in a suspended state
+                audioContext.resume().then(() => {
+                    // Start your MIDI playback here
+                        playCycle(audioContext, "descending");
+                });
+            } else {
+                // Start your MIDI playback here
+                    playCycle(audioContext, "descending");
+            }
+        });
     
 });
 
@@ -294,10 +313,11 @@ const comboLabels = ["", "Tonic", "Intervals", "Triads", "Tetrachords", "Pentato
 /**********  FUNCTIONS  ***********/
 /**
  * function called by the Start and Play Cycle buttons
- * plays the circle of fifths
+ * generates and plays the circle of fifths
+ * 
  */
-function playCycle (audioContext) {
-    console.log("Harken Music started!");
+function playCycle (audioContext, playOrder = "ascending") {
+    console.log("Harken Music started! " + playOrder);
     
     if (isMIDIplaying) { return; }
     isMIDIplaying = true;
@@ -314,6 +334,11 @@ function playCycle (audioContext) {
 
     // To access all the cells except those with the "grey-button" or "interval" class
     const tableCells = row.querySelectorAll('td:not(.numbering):not(.interval)');
+
+    // reverse array order for descending circle of fifths!
+    if (playOrder === "descending"){
+        cycleSequence.reverse();
+    }
 
     const duration = 0.75; // 1/8th note duration in seconds (60 / bpm / 2)
     const velocity = 127; // how hard the note hits
@@ -624,7 +649,7 @@ function updateHTML () {
     // display cycle only when 1 is selected
     if (numNotes === 1 || numNotes === "1"){
         allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-        <tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+        <tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleOnly.join("")}<td class = "numbering"><button class="play-button" id="playRevButton" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td></tr>`];
         document.querySelector("#combinations").innerHTML = allCombinations;
         document.getElementById('totalCombinations').innerHTML = "";
     } else {
@@ -690,7 +715,7 @@ function goBack() {
  * @param {*} sequence is [6,1,8,3,10,5,0,7,2,9,4,11,6]
  */
 function displaySequence(sequence) {
-    return `<tr><td><label><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></label></td><td> ${_.join(sequence, "</td><td>")} </td><td><label>*</label></td>
+    return `<tr><td><label><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></label></td><td> ${_.join(sequence, "</td><td>")} </td><td><button class="play-button" id="playRevButton" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td>
     <tr></tr>`;
 }
 
@@ -1016,7 +1041,7 @@ function generateCombos(t, k) {
     `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${matrixType === "note" ? obj.note : obj.cycle}</td>`
     );
 
-   allCombinations.unshift(`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead><tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleDisplay.join("")}<td class = "interval">cycle</td></tr>`);
+   allCombinations.unshift(`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead><tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleDisplay.join("")}<td class = "numbering"><button class="play-button" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td></tr>`);
 
     document.querySelector("#totalCombinations").innerHTML = `${count} ${comboLabels[k]}`;
     document.getElementById('totalCombinations').style.display = 'block';

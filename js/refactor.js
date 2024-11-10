@@ -32,7 +32,8 @@ const source = [
         "index": 0,
         "note": "A&#x266d",
         "cycle": 6,
-        "alternatingCycleOrder": -1,
+        "ascCycleOrder": -1,
+        "desCycleOrder": 11,
         "intervalLabel": "t",
         "color": { r: 204, g: 0, b: 0, a: 0.5 },
         "midi": 68
@@ -41,7 +42,8 @@ const source = [
         "index": 1,
         "note": "E&#x266d",
         "cycle": 1, 
-        "alternatingCycleOrder": 10,
+        "ascCycleOrder": 10,
+        "desCycleOrder": 9,
         "intervalLabel": "m2",
         "color": { r: 0, g: 51, b: 255, a: 0.5 },
         "midi": 63
@@ -50,7 +52,8 @@ const source = [
         "index": 2,
         "note": "B&#x266d",
         "cycle": 8,
-        "alternatingCycleOrder": 8,
+        "ascCycleOrder": 8,
+        "desCycleOrder": 7,
         "intervalLabel": "m6",
         "color": { r: 255, g: 204, b: 0, a: 0.5 },
         "midi": 70
@@ -59,7 +62,8 @@ const source = [
         "index": 3,
         "note": "F",
         "cycle": 3,
-        "alternatingCycleOrder": 6,
+        "ascCycleOrder": 6,
+        "desCycleOrder": 5,
         "intervalLabel": "m3",
         "color": { r: 102, g: 0, b: 153, a: 0.5 },
         "midi": 65
@@ -68,7 +72,8 @@ const source = [
         "index": 4,
         "note": "C",
         "cycle": 10,
-        "alternatingCycleOrder": 4,
+        "ascCycleOrder": 4,
+        "desCycleOrder": 3,
         "intervalLabel": "m7",
         "color": { r: 51, g: 153, b: 0, a: 0.5 },
         "midi": 72
@@ -77,7 +82,8 @@ const source = [
         "index": 5,
         "note": "G",
         "cycle": 5,
-        "alternatingCycleOrder": 2,
+        "ascCycleOrder": 2,
+        "desCycleOrder": 1,
         "intervalLabel": "P4",
         "color": { r: 153, g: 0, b: 0, a: 0.5 },
         "midi": 67
@@ -86,7 +92,8 @@ const source = [
         "index": 6,
         "note": "D",
         "cycle": 0,
-        "alternatingCycleOrder": 0,
+        "ascCycleOrder": 0,
+        "desCycleOrder": 0,
         "intervalLabel": "T",
         "color": { r: 51, g: 153, b: 255, a: 0.5 },
         "midi": 62
@@ -95,7 +102,8 @@ const source = [
         "index": 7,
         "note": "A",
         "cycle": 7,
-        "alternatingCycleOrder": 1,
+        "ascCycleOrder": 1,
+        "desCycleOrder": 2,
         "intervalLabel": "P5",
         "color": { r: 255, g: 102, b: 0, a: 0.5 },
         "midi": 69
@@ -104,7 +112,8 @@ const source = [
         "index": 8,
         "note": "E",
         "cycle": 2,
-        "alternatingCycleOrder": 3,
+        "ascCycleOrder": 3,
+        "desCycleOrder": 4,
         "intervalLabel": "M2",
         "color": { r: 51, g: 0, b: 204, a: 0.5 },
         "midi": 64
@@ -113,7 +122,8 @@ const source = [
         "index": 9,
         "note": "B",
         "cycle": 9,
-        "alternatingCycleOrder": 5,
+        "ascCycleOrder": 5,
+        "desCycleOrder": 6,
         "intervalLabel": "M6",
         "color": { r: 102, g: 255, b: 51, a: 0.5 },
         "midi": 71
@@ -122,7 +132,8 @@ const source = [
         "index": 10,
         "note": "F&#x266f",
         "cycle": 4,
-        "alternatingCycleOrder": 7,
+        "ascCycleOrder": 7,
+        "desCycleOrder": 8,
         "intervalLabel":"M3",
         "color": { r: 102, g: 0, b: 0, a: 0.5 },
         "midi": 66
@@ -131,7 +142,8 @@ const source = [
         "index": 11,
         "note": "C&#x266f",
         "cycle": 11,
-        "alternatingCycleOrder": 9,
+        "ascCycleOrder": 9,
+        "desCycleOrder": 10,
         "intervalLabel": "M7",
         "color": { r: 0, g: 204, b: 204, a: 0.5 },
         "midi": 73
@@ -140,7 +152,8 @@ const source = [
         "index": 12,
         "note": "G&#x266f",
         "cycle": 6,
-        "alternatingCycleOrder": 11,
+        "ascCycleOrder": 11,
+        "desCycleOrder": -1,
         "intervalLabel": "t",
         "color": { r: 204, g: 0, b: 0, a: 0.5 },
         "midi": 68
@@ -260,7 +273,7 @@ let cycleOnly = source.map((obj) =>
     );
 
 allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-<tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+<tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "numbering"><button class="play-button" id="playRevButton">&#9664;</button></td></tr>`];
 
 let audioContext;
 
@@ -286,6 +299,25 @@ document.addEventListener('DOMContentLoaded', function() {
                     playCycle(audioContext);
             }
         });
+
+        // duplicate code to Add the event listener for the reverse button click to handle AudioContext and MIDI playback
+        document.getElementById('playRevButton').addEventListener('click', function() {
+            if (!audioContext) {
+                // Create the AudioContext only after the user has clicked the button
+                audioContext = new (window.AudioContext || window.webkitAudioContext)();
+            }
+    
+            if (audioContext.state === 'suspended') {
+                // Resume the AudioContext if it’s in a suspended state
+                audioContext.resume().then(() => {
+                    // Start your MIDI playback here
+                        playCycle(audioContext, "descending");
+                });
+            } else {
+                // Start your MIDI playback here
+                    playCycle(audioContext, "descending");
+            }
+        });
     
 });
 
@@ -294,16 +326,22 @@ const comboLabels = ["", "Tonic", "Intervals", "Triads", "Tetrachords", "Pentato
 /**********  FUNCTIONS  ***********/
 /**
  * function called by the Start and Play Cycle buttons
- * plays the circle of fifths
+ * generates and plays the circle of fifths
+ * 
  */
-function playCycle (audioContext) {
-    console.log("Harken Music started!");
+function playCycle (audioContext, playOrder = "ascending") {
+    console.log("Harken Music started! " + playOrder);
     
     if (isMIDIplaying) { return; }
     isMIDIplaying = true;
 
-    // removes leading 6; orders by alternatingCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
-    const cycleSequence = _.slice(_.orderBy(source,["alternatingCycleOrder"], ["asc"]),1);
+    // removes leading 6; orders by ascCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
+    let cycleSequence = _.slice(_.orderBy(source,["ascCycleOrder"], ["asc"]),1);
+
+    // removes remaining 6; orders by descending cycle sequence!
+        if (playOrder === "descending"){
+            cycleSequence = _.slice(_.orderBy(source,["desCycleOrder"], ["asc"]),1);
+        }
 
     // duplicate first note, add 12 to MIDI, add to the end of the sequence
     const lastNote = _.clone(_.first(cycleSequence));
@@ -624,7 +662,7 @@ function updateHTML () {
     // display cycle only when 1 is selected
     if (numNotes === 1 || numNotes === "1"){
         allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-        <tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
+        <tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleOnly.join("")}<td class = "numbering"><button class="play-button" id="playRevButton" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td></tr>`];
         document.querySelector("#combinations").innerHTML = allCombinations;
         document.getElementById('totalCombinations').innerHTML = "";
     } else {
@@ -690,7 +728,7 @@ function goBack() {
  * @param {*} sequence is [6,1,8,3,10,5,0,7,2,9,4,11,6]
  */
 function displaySequence(sequence) {
-    return `<tr><td><label><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></label></td><td> ${_.join(sequence, "</td><td>")} </td><td><label>*</label></td>
+    return `<tr><td><label><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></label></td><td> ${_.join(sequence, "</td><td>")} </td><td><button class="play-button" id="playRevButton" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td>
     <tr></tr>`;
 }
 
@@ -1016,7 +1054,7 @@ function generateCombos(t, k) {
     `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${matrixType === "note" ? obj.note : obj.cycle}</td>`
     );
 
-   allCombinations.unshift(`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead><tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleDisplay.join("")}<td class = "interval">cycle</td></tr>`);
+   allCombinations.unshift(`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead><tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleDisplay.join("")}<td class = "numbering"><button class="play-button" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td></tr>`);
 
     document.querySelector("#totalCombinations").innerHTML = `${count} ${comboLabels[k]}`;
     document.getElementById('totalCombinations').style.display = 'block';
@@ -1192,10 +1230,10 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
     // select combo to display in #permutationsCombo table and set up buttons
     // change note sequence to cycle order for permutationsCombo table only
-     let notesToPlay = _.orderBy(selectedComboArray,["alternatingCycleOrder"], ["asc"]);
+     let notesToPlay = _.orderBy(selectedComboArray,["ascCycleOrder"], ["asc"]);
      
        // if first note is duplicate 6, then delete it
-           if (_.first(notesToPlay).alternatingCycleOrder < 0) {
+           if (_.first(notesToPlay).ascCycleOrder < 0) {
                notesToPlay = _.slice(notesToPlay,1);
            }
         // duplicate first note, add 12 to MIDI, add to the end of the sequence
@@ -1212,8 +1250,8 @@ function createPermutationsTables(comboCount, selectedComboArray) {
         .replace(/<tr[^>]*>/, `<tr id = "${rowID}">`);
           
      let permutationsComboCycle = allCombinations[0];
-    // removes leading 6; orders by alternatingCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
-    const cycleSequence = _.slice(_.orderBy(source,["alternatingCycleOrder"], ["asc"]),1);
+    // removes leading 6; orders by ascCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
+    const cycleSequence = _.slice(_.orderBy(source,["ascCycleOrder"], ["asc"]),1);
     // duplicate first note, add 12 to MIDI, add to the end of the sequence
     const cycleLastNote = _.clone(_.first(cycleSequence));
     cycleLastNote.midi += 12;
