@@ -1035,7 +1035,8 @@ function generateCombos(t, k) {
 
         // TODO // replacing displayLabel with nothing until we can implement play button
         const rowID = count + "-combinations";
-        allCombinations.push(`<tr id = ${rowID}><td>${button}</td>${display.join("")}<td class = "interval"></td></tr>`);
+        const buttonID = count + "-playDes";
+        allCombinations.push(`<tr id = ${rowID}><td>${button}</td>${display.join("")}<td id = ${buttonID}></td></tr>`);
         // first join replaces commas with html tags for table data
         // second join replaces commas with comma space
         // (count === 1) && console.log(array);  
@@ -1159,7 +1160,7 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
 
 
     // TODO // this should be moved elsewhere ???
-    document.querySelector("#title").innerHTML = `Selected Combination #`;
+    // document.querySelector("#title").innerHTML = `Selected Combination #`;
 
     // Common Permutations of # Total
     document.querySelector("#commonPermutationsTitle").innerHTML = "Common Permutations";
@@ -1219,9 +1220,8 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     // extract only unique cycle values (no duplicates) & sort by cycle
     const combinationOfNotesOnly = _.sortBy(_.uniqBy(selectedComboArray, "cycle"), "cycle");
     const totalPermutationsCount = calculatePermutations(combinationOfNotesOnly.length);
-    const rowID = comboCount + "-permutationsCombo";
 
-    document.querySelector("#title").innerHTML = `Selected Combination #${rowID}`;
+    document.querySelector("#title").innerHTML = `Selected Combination #${comboCount}`;
     document.getElementById('startOver').classList.replace("hidden", "showInline");
     document.getElementById('goBack').classList.replace("hidden", "showInline");
     document.getElementById('goToBottom').classList.replace("hidden", "showInline");
@@ -1231,36 +1231,43 @@ function createPermutationsTables(comboCount, selectedComboArray) {
     // select combo to display in #permutationsCombo table and set up buttons
     // change note sequence to cycle order for permutationsCombo table only
      let notesToPlay = _.orderBy(selectedComboArray,["ascCycleOrder"], ["asc"]);
+     let notesToPlayDes = _.orderBy(selectedComboArray,["desCycleOrder"], ["asc"]);
+    // if first note is duplicate 6, then delete it
+    (_.first(notesToPlay).ascCycleOrder < 0) && (notesToPlay = _.slice(notesToPlay,1));
+    (_.first(notesToPlayDes).desCycleOrder < 0) && (notesToPlayDes = _.slice(notesToPlayDes,1));
      
-       // if first note is duplicate 6, then delete it
-           if (_.first(notesToPlay).ascCycleOrder < 0) {
-               notesToPlay = _.slice(notesToPlay,1);
-           }
-        // duplicate first note, add 12 to MIDI, add to the end of the sequence
-        const lastNote = _.clone(_.first(notesToPlay));
+    // duplicate first note, add 12 to MIDI, add to the end of the sequence
+        let lastNote = _.clone(_.first(notesToPlay));
         lastNote.midi += 12;
        notesToPlay.push(lastNote);
+       lastNote = _.clone(_.first(notesToPlayDes));
+        lastNote.midi += 12;
+        notesToPlayDes.push(lastNote);
 
     // update button and tr tags from allCombinations
      let selectedCombination = allCombinations[comboCount];
+     const rowID = comboCount + "-permutationsCombo";
 
-     let newButtonTag = `<button class="grey-button" onclick='playMIDICycle("${rowID}", ${JSON.stringify(notesToPlay)}, "#permutationsCombo")'>`;
+    let newButtonTag = `<button id = "playAsc" class="play-button" onclick='playMIDICycle("${rowID}", ${JSON.stringify(notesToPlay)}, "#permutationsCombo")'>`;
      selectedCombination = selectedCombination
         .replace(/<button[^>]*>/, newButtonTag)
         .replace(/<tr[^>]*>/, `<tr id = "${rowID}">`);
-          
+
+    let newDesButton = `<button id = "playDes" class="play-button" onclick='playMIDICycle("${rowID}", ${JSON.stringify(notesToPlayDes)}, "#permutationsCombo")'>&#9664</button>`;
+
      let permutationsComboCycle = allCombinations[0];
     // removes leading 6; orders by ascCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
     const cycleSequence = _.slice(_.orderBy(source,["ascCycleOrder"], ["asc"]),1);
     // duplicate first note, add 12 to MIDI, add to the end of the sequence
-    const cycleLastNote = _.clone(_.first(cycleSequence));
+    let cycleLastNote = _.clone(_.first(cycleSequence));
     cycleLastNote.midi += 12;
     cycleSequence.push(cycleLastNote);
-    newButtonTag = `<button class="grey-button" onclick='playMIDICycle("cycle-permutationsCombo", ${JSON.stringify(cycleSequence)}, "#permutationsCombo")'>`;
+    newButtonTag = `<button class="play-button" onclick='playMIDICycle("cycle-permutationsCombo", ${JSON.stringify(cycleSequence)}, "#permutationsCombo")'>`;
     permutationsComboCycle = permutationsComboCycle
         .replace(/<tr id = "cycle">/, `<tr id = "cycle-permutationsCombo">`)
         .replace(/<button[^>]*>/, newButtonTag);
 
+   
     document.querySelector("#permutationsCombo").innerHTML = permutationsComboCycle + selectedCombination;
 
     // go to top of screen to show selected combo playing
@@ -1321,14 +1328,24 @@ function createPermutationsTables(comboCount, selectedComboArray) {
       document.getElementById('reflections').style.display = 'inline-block';
       document.getElementById('rotationsTitle').style.display = 'block';
       document.getElementById('rotations').style.display = 'inline-block';
-    //   document.getElementById('allPermutationsTitle').style.display = 'block';
-    //   document.getElementById('allPermutations').style.display = 'inline-block';
 
-    // hide HTML elements
-    // document.getElementById('tonicSelect').style.display = 'none';
     document.getElementById('notes').classList.replace("showInline", "hidden");
     document.getElementById('totalCombinations').style.display = 'none';
     document.getElementById('combinations').style.display = 'none';
+
+    // change button innerHTML to play button, after we're sure it's loaded
+    document.getElementById('playAsc').innerHTML = "&#9654;";
+    // change play descending button innerHTML after we're sure it's updated
+    // console.log(newDesButton);
+    // let myCell = document.getElementById(`${comboCount}-playDes`);
+    // if (myCell){
+    //     console.log(comboCount);
+    //     myCell.innerHTML = "@@";
+    // } else {
+    //     console.log("myCell not found");
+    // }
+    document.getElementById(`${comboCount}-playDes`).innerHTML = "&#9664;";
+
  }
 
  /**********  REFLECTION FUNCTIONS  ***********/

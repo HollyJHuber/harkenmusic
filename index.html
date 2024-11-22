@@ -104,7 +104,7 @@
             <!-- ALL permutations inserted here (if applicable)-->
         </div>
         <!-- end of generatedContent div -->
-        
+
        <div> <button class="grey-button hidden" id="goToTop" onclick="scrollToTop()">GO TO TOP</button></div>
             <div class="divider"></div>
             <div>
@@ -193,6 +193,25 @@
                 </ul>
                 </section>
                 <section>
+                <h2>Unisons and Octaves</h2>
+
+                <p class="modal-text">We assign unisons and octaves to the same numerical value. For example, the number “0” represents the same pitch class across all octaves, meaning the tonic is “0” whether it’s in the bass, middle, or the treble ranges. While octaves and unisons are technically intervals, they hold no distinct harmonic function beyond emphasizing the foundational tone, serving instead as structural points of return within the tonal space.</p>
+                
+                <p class="modal-text">We can manage octaves moving in both directions (up and down) using only math. Here’s the formula:</p>
+                
+                <ul><li><em>x</em> = (<em>n</em> + 12<em>y</em>) mod 12</li></ul>
+                
+                <p class="modal-text">Here’s how it works moving up:</p>
+                
+                <ul><li>Set <em>y</em> as a positive integer (e.g., <em>y</em> = 1 moves <em>n</em> up one octave)</li></ul>
+
+                <p class="modal-text">Here’s how it works moving down:</p>
+
+                <ul><li>Set <em>y</em> as a negative integer (e.g., <em>y</em> = −1 moves <em>n</em> down one octave)</li></ul>
+                
+                <p class="modal-text">For example, if we assign MIDI pitch number 50 as the fixed tonic (0) and decide to shift that pitch up one octave (+12), we simply set variables <em>n</em> = 50 and <em>y</em> = 1 and apply the formula, which raises the pitch one octave from MIDI number 50 to 62.</p>
+                </section>
+                        
                 <h2>Cycle Order</h2>
                 <p class="modal-text">This system uses two simple formulas to calculate ascending and descending cycles: (<em>n</em> * 7) % 12 for <em>n</em> = 0 to 11 produces the ascending cycle [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5], while (<em>n</em> * 5) % 12 for <em>n</em> = 0 to 11 produces the descending cycle [0, 5, 10, 3, 8, 1, 6, 11, 4, 9, 2, 7].</p>
 
