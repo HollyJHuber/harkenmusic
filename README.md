@@ -70,6 +70,22 @@ Any musical pitch may be used for the fixed tonic [0]; and thus every note that 
 	•	[0, 10] = “minor 7th”  
 	•	[0, 11] = “major 7th”
 
+Unisons and Octaves
+
+We assign unisons and octaves to the same numerical value. For example, the number “0” represents the same pitch class across all octaves, meaning the tonic is “0” whether it’s in the bass, middle, or the treble ranges. While octaves and unisons are technically intervals, they hold no distinct harmonic function beyond emphasizing the foundational tone, serving instead as structural points of return within the tonal space.
+
+We can manage octaves moving in both directions (up and down) using only math. Here’s the formula:
+
+x = (n + 12y) mod 12
+
+Here’s how it works:
+
+Moving up: Set y as a positive integer (e.g., y = 1 moves n up one octave)
+
+Moving down: Set y as a negative integer (e.g., y = −1 moves n down one octave)
+
+For example, if we assign MIDI pitch number 50 as the fixed tonic (0) and decide to shift that pitch up one octave (+12), we simply set variables n = 50 and y = 1 and apply the formula, which raises the pitch one octave from MIDI number 50 to 62.
+
 Cycle Order
 
 This system uses two simple formulas to calculate ascending and descending cycles: (n * 7) % 12 for n = 0 to 11 produces the ascending cycle [0, 7, 2, 9, 4, 11, 6, 1, 8, 3, 10, 5], while (n * 5) % 12 for n = 0 to 11 produces the descending cycle [0, 5, 10, 3, 8, 1, 6, 11, 4, 9, 2, 7]. 

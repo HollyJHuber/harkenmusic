@@ -8,7 +8,7 @@
 .DS_Store
 Thumbs.db
 
-#ignore my test/refactor files
+#ignore my test files
 index copy.html
 harken copy.css
 index copy.js
