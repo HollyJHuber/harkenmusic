@@ -593,7 +593,12 @@ function playMIDISequence(rowID, noteSequenceData, tableID = "#permutationsCombo
  * @param {*} noteSequencesArray 
  */
 async function playAllSequences(noteSequencesArray) {
-    stopMIDI = false; // Reset stop flag
+
+    if (isMIDIplaying) {
+        stopMIDI = true;
+    } else {
+        stopMIDI = false; // Reset stop flag
+    }
     const numberOfNotes = noteSequencesArray[0].notes.length;
     let buttonID = "";
 
@@ -639,6 +644,9 @@ async function playAllSequences(noteSequencesArray) {
         if (stopMIDI) {
             console.log(`stop play all sequences`);
             // TODO reset button // ??
+            if (buttonID !== "") {
+                stopPlayingMIDI(buttonID);
+            }
             break;
         }
         await playMIDISequence(sequence.rowID, sequence.notes, "", 0.375); 
@@ -676,6 +684,9 @@ function updateHTML () {
  * called by GO BACK button to display the combinations again
  */
 function goBack() {
+    if (isMIDIplaying) {
+        stopMIDI = true;
+    }
     const tonic = document.querySelector("#tonicSelect").value;
     const numNotes = document.querySelector("#notes").value;
 
@@ -1469,10 +1480,15 @@ emailModal.innerHTML = "<a class='modal-link' href='mailto:" + generateEmailLink
  *  */
 function startOver() {
 
+    if (isMIDIplaying) {
+        stopMIDI = true;
+    } else {
+        stopMIDI = false;
+    }
+
     // reset all variables
     matrixType = "number";
     isMIDIplaying = false;
-    stopMIDI = false;
     allCombinations= [];
     allCommonPermutations = [];
     allPermutations = [];
@@ -1524,6 +1540,7 @@ function startOver() {
 
 // Function to scroll to the top of the page
 function scrollToTop() {
+
     window.scrollTo({ top: 0, behavior: 'smooth' });
 }
 
@@ -1540,6 +1557,9 @@ document.getElementById('openModalButton').addEventListener('click', function(ev
   });
 
   function openModal() {
+    if (isMIDIplaying) {
+        stopMIDI = true;
+    }
     // Display the modal and prevent background scroll
     document.getElementById('AboutModal').style.display = 'block';
     document.body.classList.add('modal-open');
