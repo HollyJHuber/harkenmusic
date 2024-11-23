@@ -636,7 +636,7 @@ async function playAllSequences(noteSequencesArray) {
             break;
     }
 
-    console.log(noteSequencesArray);
+    // console.log(noteSequencesArray);
 
     for (let i = 0; i < noteSequencesArray.length; i++) {
         const sequence = noteSequencesArray[i];
@@ -662,6 +662,7 @@ async function playAllSequences(noteSequencesArray) {
 /**
  * function called by pull-down menus to generate all possible combinations 
 * tonic and the total number of notes in each combination
+* also called by GO BACK button
 */
 function updateHTML () {
     const tonic = document.querySelector("#tonicSelect").value;
@@ -675,33 +676,11 @@ function updateHTML () {
         document.getElementById('totalCombinations').innerHTML = "";
     } else {
         document.querySelector("#combinations").innerHTML = generateCombos(tonic, numNotes);
-        // TODO let's update generateCombos now
     }
 
-}
-
-/**
- * called by GO BACK button to display the combinations again
- */
-function goBack() {
     if (isMIDIplaying) {
         stopMIDI = true;
     }
-    const tonic = document.querySelector("#tonicSelect").value;
-    const numNotes = document.querySelector("#notes").value;
-
-    // console.log(`tonic ${tonic}, numNotes ${numNotes}`)
-
-    // display cycle only when 1 is selected
-    if (numNotes === 1 || numNotes === "1"){
-        allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-        <tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "interval">cycle</td></tr>`];
-        document.querySelector("#combinations").innerHTML = allCombinations;
-        document.getElementById('totalCombinations').innerHTML = "";
-    } else {
-        document.querySelector("#combinations").innerHTML = generateCombos(tonic, numNotes);
-    }
-    // display elements
     document.getElementById('notes').classList.replace("hidden", "showInline");
     document.getElementById('totalCombinations').style.display = 'block';
     document.getElementById('combinations').style.display = 'inline-block';
@@ -709,11 +688,22 @@ function goBack() {
     // hide elements
     document.getElementById('goBack').classList.replace("showInline", "hidden");
     document.getElementById('startOver').classList.replace("showInline", "hidden");
-    document.getElementById('goToBottom').classList.replace("showInline", "hidden");
-    document.getElementById('goToTop').classList.replace("showInline", "hidden");
 
     document.getElementById('permutationsCombo').style.display = 'none';
     document.getElementById('generatedContent').classList.replace("showInline", "hidden");
+
+}
+/**
+ * go back button redo
+ * simply starts over and then regenerates combos
+ */
+function goBack() {
+    const tonic = document.querySelector("#tonicSelect").value;
+    const numNotes = document.querySelector("#notes").value;
+    startOver();
+    document.querySelector("#tonicSelect").value = tonic;
+  document.querySelector("#notes").value = numNotes;
+    updateHTML();
 }
 
  /**
@@ -1211,7 +1201,7 @@ function permute(sequence, maxLimit = 5040, startIndex = 0) {
         document.querySelector("#playAllPermutations").style.display = 'none';
         document.querySelector("#allPermutations").style.display = 'none';
      }
-
+     // TODO // what if theres more than 4 notes?? 
     // returns ALL Permutations
     return( _.join(allPermutations,  "</tr><tr>"));
 }
@@ -1295,7 +1285,6 @@ function createPermutationsTables(comboCount, selectedComboArray) {
      if (numberOfNotes < 4) {
         // all permutations, no need for common but put the all where common would be!
         document.querySelector("#commonPermutationsTitle").innerHTML = "All Permutations";
-
         document.querySelector("#commonPermutations").innerHTML = generatePermutations(combinationOfNotesOnly);
         document.querySelector("#allPermutationsTitle").style.display = 'none';
         document.querySelector("#allPermutations").style.display = 'none';
