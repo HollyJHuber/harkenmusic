@@ -273,7 +273,7 @@ let cycleOnly = source.map((obj) =>
     );
 
 allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-<tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton">&#9654;</button></td>${cycleOnly.join("")}<td class = "numbering"><button class="play-button" id="playRevButton">&#9664;</button></td></tr>`];
+<tr id = "cycle"><td class = "numbering"><button class="play-button" id="playCycleAsc">&#9654;</button></td>${cycleOnly.join("")}<td class = "numbering"><button class="play-button" id="playCycleDes">&#9664;</button></td></tr>`];
 
 let audioContext;
 
@@ -282,7 +282,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector("#combinations").innerHTML = allCombinations;
 
         // Add the event listener for the button click to handle AudioContext and MIDI playback
-        document.getElementById('playButton').addEventListener('click', function() {
+        document.getElementById('playCycleAsc').addEventListener('click', function() {
             if (!audioContext) {
                 // Create the AudioContext only after the user has clicked the button
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -301,7 +301,7 @@ document.addEventListener('DOMContentLoaded', function() {
         });
 
         // duplicate code to Add the event listener for the reverse button click to handle AudioContext and MIDI playback
-        document.getElementById('playRevButton').addEventListener('click', function() {
+        document.getElementById('playCycleDes').addEventListener('click', function() {
             if (!audioContext) {
                 // Create the AudioContext only after the user has clicked the button
                 audioContext = new (window.AudioContext || window.webkitAudioContext)();
@@ -490,7 +490,9 @@ function stopPlayingMIDI(buttonID) {
 
             break;
         case "playAllRotations":
-            playButton = document.querySelector("#playAllRotations").onclick = function() { playAllSequences(allRotations) };
+            document.querySelector("#playAllRotations").onclick = function() { playAllSequences(allRotations) };
+            // TODO why were we assigning a variable here??
+            //playButton = document.querySelector("#playAllRotations").onclick = function() { playAllSequences(allRotations) };
             document.querySelector("#playAllRotations").innerHTML = "PLAY ALL";
 
             break;
@@ -671,7 +673,7 @@ function updateHTML () {
     // display cycle only when 1 is selected
     if (numNotes === 1 || numNotes === "1"){
         allCombinations= [`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead>
-        <tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleOnly.join("")}<td class = "numbering"><button class="play-button" id="playRevButton" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td></tr>`];
+        <tr id = "cycle"><td class = "numbering"><button class="play-button" id="playCycleAsc" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleOnly.join("")}<td class = "numbering"><button class="play-button" id="playCycleDes" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td></tr>`];
         document.querySelector("#combinations").innerHTML = allCombinations;
         document.getElementById('totalCombinations').innerHTML = "";
     } else {
@@ -729,7 +731,7 @@ function goBack() {
  * @param {*} sequence is [6,1,8,3,10,5,0,7,2,9,4,11,6]
  */
 function displaySequence(sequence) {
-    return `<tr><td><label><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></label></td><td> ${_.join(sequence, "</td><td>")} </td><td><button class="play-button" id="playRevButton" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td>
+    return `<tr><td><label><button class="play-button" id="playCycleAsc" onclick="playCycle(audioContext)">&#9654;</button></label></td><td> ${_.join(sequence, "</td><td>")} </td><td><button class="play-button" id="playCycleDes" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td>
     <tr></tr>`;
 }
 
@@ -1056,7 +1058,7 @@ function generateCombos(t, k) {
     `<td style="background-color: rgba(${obj.color.r}, ${obj.color.g}, ${obj.color.b}, ${obj.color.a})">${matrixType === "note" ? obj.note : obj.cycle}</td>`
     );
 
-   allCombinations.unshift(`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead><tr id = "cycle"><td class = "numbering"><button class="play-button" id="playButton" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleDisplay.join("")}<td class = "numbering"><button class="play-button" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td></tr>`);
+   allCombinations.unshift(`<thead class = "numbering"><tr><th></th><th colspan = "6">Descending Cycle</th><th>Tonic</th><th colspan = "6">Ascending Cycle</th><th></th></tr></thead><tr id = "cycle"><td class = "numbering"><button class="play-button" id="playCycleAsc" onclick="playCycle(audioContext)">&#9654;</button></td>${cycleDisplay.join("")}<td class = "numbering"><button class="play-button" id="playCycleDes" onclick="playCycle(audioContext, 'descending')">&#9664;</button></td></tr>`);
 
     document.querySelector("#totalCombinations").innerHTML = `${count} ${comboLabels[k]}`;
     document.getElementById('totalCombinations').style.display = 'block';
@@ -1254,21 +1256,35 @@ function createPermutationsTables(comboCount, selectedComboArray) {
         .replace(/<button[^>]*>/, newButtonTag)
         .replace(/<tr[^>]*>/, `<tr id = "${rowID}">`);
 
+        // !!
+        // TODO this is my new play combo descending button that doesn't work
     let newDesButton = `<button id = "playDes" class="play-button" onclick='playMIDICycle("${rowID}", ${JSON.stringify(notesToPlayDes)}, "#permutationsCombo")'>&#9664</button>`;
 
      let permutationsComboCycle = allCombinations[0];
     // removes leading 6; orders by ascCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
-    const cycleSequence = _.slice(_.orderBy(source,["ascCycleOrder"], ["asc"]),1);
+    let cycleSequence = _.slice(_.orderBy(source,["ascCycleOrder"], ["asc"]),1);
     // duplicate first note, add 12 to MIDI, add to the end of the sequence
     let cycleLastNote = _.clone(_.first(cycleSequence));
     cycleLastNote.midi += 12;
     cycleSequence.push(cycleLastNote);
-    newButtonTag = `<button class="play-button" onclick='playMIDICycle("cycle-permutationsCombo", ${JSON.stringify(cycleSequence)}, "#permutationsCombo")'>`;
     permutationsComboCycle = permutationsComboCycle
-        .replace(/<tr id = "cycle">/, `<tr id = "cycle-permutationsCombo">`)
-        .replace(/<button[^>]*>/, newButtonTag);
+        .replace(/<tr id = "cycle">/, `<tr id = "cycle-permutationsCombo">`);
 
-   
+    // reassign the playCycleAsc & playCycleDes buttons so notes in table animate
+    newButtonTag = `<button class="play-button" id = "playCycleAsc" onclick='playMIDICycle("cycle-permutationsCombo", ${JSON.stringify(cycleSequence)}, "#permutationsCombo")'>`;
+    permutationsComboCycle = permutationsComboCycle.replace(
+            /<button[^>]*id\s*=\s*["']playCycleAsc["'][^>]*>/,
+            newButtonTag
+        );
+
+    // removes remaining 6; orders by descending cycle sequence!
+    cycleSequence = _.slice(_.orderBy(source,["desCycleOrder"], ["asc"]),1);
+    newButtonTag = `<button class="play-button" id = "playCycleDes" onclick='playMIDICycle("cycle-permutationsCombo", ${JSON.stringify(cycleSequence)}, "#permutationsCombo")'>`;
+    permutationsComboCycle = permutationsComboCycle.replace(
+            /<button[^>]*id\s*=\s*["']playCycleDes["'][^>]*>/,
+            newButtonTag
+        );
+
     document.querySelector("#permutationsCombo").innerHTML = permutationsComboCycle + selectedCombination;
 
     // go to top of screen to show selected combo playing
@@ -1516,7 +1532,9 @@ function startOver() {
      document.querySelector("#playAllReflections").onclick = function() { playAllSequences(allReflections) };
      document.querySelector("#playAllReflections").innerHTML = "PLAY ALL";
 
-     playButton = document.querySelector("#playAllRotations").onclick = function() { playAllSequences(allRotations) };
+     // TODO // why are we assigning a variable here??
+    //  playButton = document.querySelector("#playAllRotations").onclick = function() { playAllSequences(allRotations) };
+    document.querySelector("#playAllRotations").onclick = function() { playAllSequences(allRotations) };
      document.querySelector("#playAllRotations").innerHTML = "PLAY ALL";
 
      document.querySelector("#playAllPermutations").onclick = function() { playAllSequences(allAllPermutations) };
