@@ -1031,15 +1031,16 @@ function generateCombos(t, k) {
         array[array.length -1].countNo = count;
     
         // get the updated intervalLabels from info, the last array item
-        // TODO // replacing intervalLabel with nothing until we can implement the play button
-        const displayLabel = array[array.length -1].intervalLabel;
+        // not currently using intervalLabel 
+        // const displayLabel = array[array.length -1].intervalLabel;
         
         const button = `<button class="grey-button" onclick='createPermutationsTables(${count}, ${JSON.stringify(_.initial(array))})'>${count}.</button>`;
 
-        // TODO // replacing displayLabel with nothing until we can implement play button
+        //add a hidden button for playDes when combo is selected
+        const buttonDes = `<button class="grey-button hidden">&#9664;</button>`
+        ;
         const rowID = count + "-combinations";
-        const buttonID = count + "-playDes";
-        allCombinations.push(`<tr id = ${rowID}><td>${button}</td>${display.join("")}<td id = ${buttonID}></td></tr>`);
+        allCombinations.push(`<tr id = ${rowID}><td>${button}</td>${display.join("")}<td>${buttonDes}</td></tr>`);
         // first join replaces commas with html tags for table data
         // second join replaces commas with comma space
         // (count === 1) && console.log(array);  
@@ -1251,14 +1252,13 @@ function createPermutationsTables(comboCount, selectedComboArray) {
      let selectedCombination = allCombinations[comboCount];
      const rowID = comboCount + "-permutationsCombo";
 
-    let newButtonTag = `<button id = "playAsc" class="play-button" onclick='playMIDICycle("${rowID}", ${JSON.stringify(notesToPlay)}, "#permutationsCombo")'>`;
      selectedCombination = selectedCombination
-        .replace(/<button[^>]*>/, newButtonTag)
         .replace(/<tr[^>]*>/, `<tr id = "${rowID}">`);
 
-        // !!
-        // TODO this is my new play combo descending button that doesn't work
-    let newDesButton = `<button id = "playDes" class="play-button" onclick='playMIDICycle("${rowID}", ${JSON.stringify(notesToPlayDes)}, "#permutationsCombo")'>&#9664</button>`;
+     // change the numbered select combo button to a play combo ascending button
+    let newButtonTag = `<button id = "playAsc" class="play-button" onclick='playMIDICycle("${rowID}", ${JSON.stringify(notesToPlay)}, "#permutationsCombo")'>`;
+     selectedCombination = selectedCombination
+        .replace(/<button[^>]*>/, newButtonTag);
 
      let permutationsComboCycle = allCombinations[0];
     // removes leading 6; orders by ascCycleOrder which is 0, 7, 5, 2, 10, 9, 3, 4, 8, 11, 1, 6
@@ -1279,6 +1279,10 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
     // removes remaining 6; orders by descending cycle sequence!
     cycleSequence = _.slice(_.orderBy(source,["desCycleOrder"], ["asc"]),1);
+    // duplicate first note, add 12 to MIDI, add to the end of the sequence
+    cycleLastNote = _.clone(_.first(cycleSequence));
+    cycleLastNote.midi += 12;
+    cycleSequence.push(cycleLastNote);
     newButtonTag = `<button class="play-button" id = "playCycleDes" onclick='playMIDICycle("cycle-permutationsCombo", ${JSON.stringify(cycleSequence)}, "#permutationsCombo")'>`;
     permutationsComboCycle = permutationsComboCycle.replace(
             /<button[^>]*id\s*=\s*["']playCycleDes["'][^>]*>/,
@@ -1351,18 +1355,38 @@ function createPermutationsTables(comboCount, selectedComboArray) {
 
     // change button innerHTML to play button, after we're sure it's loaded
     document.getElementById('playAsc').innerHTML = "&#9654;";
-    // change play descending button innerHTML after we're sure it's updated
-    // console.log(newDesButton);
-    // let myCell = document.getElementById(`${comboCount}-playDes`);
-    // if (myCell){
-    //     console.log(comboCount);
-    //     myCell.innerHTML = "@@";
-    // } else {
-    //     console.log("myCell not found");
-    // }
-    document.getElementById(`${comboCount}-playDes`).innerHTML = "&#9664;";
 
- }
+    // play selected combo descending moved here to ensure table/row/button is loaded
+    let trId = `${comboCount}-permutationsCombo`; 
+    // Select the table row by its ID
+    let tableRow = document.getElementById(trId);
+
+    if (tableRow) {
+        // Find all buttons within the row that have the classes 'grey-button' and 'hidden'
+        let buttons = tableRow.querySelectorAll("button.grey-button.hidden");
+
+        if (buttons.length > 0) {
+            // Get the last button in the list
+            let lastButton = buttons[buttons.length - 1];
+
+            // Create a new button element
+            let newButton = document.createElement("button");
+            newButton.id = "playDes";
+            newButton.className = "play-button"; 
+            newButton.innerHTML = "&#9664;"; 
+            newButton.onclick = function() {
+                playMIDICycle(rowID, JSON.stringify(notesToPlayDes), "#permutationsCombo"); 
+            };
+
+            // Replace the last button with the new button
+            lastButton.parentNode.replaceChild(newButton, lastButton);
+        } else {
+            console.warn("No buttons found with class 'grey-button hidden' in the row.");
+        }
+    } else {
+        console.error(`Table row with ID '${trId}' not found.`);
+    }
+}
 
  /**********  REFLECTION FUNCTIONS  ***********/
 
